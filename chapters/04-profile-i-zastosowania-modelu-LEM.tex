@@ -1,0 +1,195 @@
+% =====================================================================
+% Rozdział 4: Profile i zastosowania modelu LEM
+% =====================================================================
+
+\chapter{Profile i zastosowania modelu LEM}
+\label{chap:profile}
+
+\section{Rola profili LEM}
+Profil LEM definiuje sposób zastosowania modelu LEM w określonym środowisku lub domenie.
+Profil MOŻE ograniczać zakres wykorzystywanych komponentów oraz określać dodatkowe wymagania implementacyjne, lecz NIE ROZSZERZA modelu semantycznego LEM i NIE DEFINIUJE nowych komponentów informacji o lokalizacji.
+Profil określa sposób wykorzystania istniejących komponentów modelu LEM w określonym kontekście zastosowania. Profil nie zmienia znaczenia komponentów modelu ani zasad ich interpretacji.
+
+\section{Zasady definiowania profili}
+Profil LEM MUSI spełniać następujące zasady:
+
+\begin{itemize}
+    \item \textbf{Zgodność semantyczna:} Profil NIE MOŻE zmieniać znaczenia komponentów modelu LEM ani definiować alternatywnej interpretacji informacji.
+    \item \textbf{Ograniczenie zakresu:} Profil MOŻE ograniczać zakres wykorzystywanych komponentów, lecz NIE MOŻE usuwać ich znaczenia z modelu podstawowego.
+    \item \textbf{Jednoznaczność wymagań:} Wymagania określone przez profil MUSZĄ wskazywać, które komponenty są wymagane, opcjonalne lub niewykorzystywane w danym zastosowaniu. Status obecności komponentu nie jest tożsamy z regułami obsługi nieznanych rozszerzeń z sekcji 7.7.
+    \item \textbf{Niezależność reprezentacji:} Profil MOŻE określać wymagania dotyczące reprezentacji danych, lecz NIE MOŻE uzależniać znaczenia informacji od konkretnego formatu zapisu.
+\end{itemize}
+
+\section{Profile domenowe i przykłady zastosowań}
+Poniższe podrozdziały opisują przykładowe domeny, w których model LEM może być stosowany. Każdy opis obejmuje zarówno rolę profilu danej domeny (co profil może ograniczać lub wymagać), jak i sposób integracji z systemami tej domeny — te dwa aspekty są ze sobą ściśle powiązane i celowo omawiane łącznie.
+
+We wszystkich poniższych domenach obowiązuje wspólna zasada: integracja z systemem zewnętrznym NIE MOŻE zależeć od konkretnego protokołu, producenta ani technologii; informacja lokalizacyjna przekazywana pomiędzy systemami MUSI zachowywać znaczenie określone przez model semantyczny LEM; a ograniczenia techniczne systemu zewnętrznego nigdy nie stanowią rozszerzenia modelu LEM (zob. 3.1, 4.5). Jeżeli system zewnętrzny wymaga informacji nieposiadających odpowiednika w LEM, informacje te MUSZĄ być traktowane jako dane dodatkowe lub jako element profilu, zgodnie z zasadami niniejszego rozdziału.
+
+\subsection{Infrastruktura sieciowa}
+Profil infrastruktury sieciowej definiuje zastosowanie modelu LEM do opisu fizycznej lokalizacji elementów infrastruktury technicznej, takich jak punkty dostępowe, przełączniki, urządzenia IoT, systemy automatyki budynkowej oraz inne elementy wymagające jednoznacznej identyfikacji przestrzennej.
+
+Integracja z systemami sieciowymi może obejmować urządzenia oraz systemy odpowiedzialne za obsługę infrastruktury technicznej — LEM pełni w tym przypadku rolę wspólnej warstwy semantycznej dla informacji o lokalizacji fizycznej urządzeń, natomiast NIE DEFINIUJE sposobu wykrywania urządzeń, zarządzania konfiguracją sieci ani mechanizmów komunikacji sieciowej.
+
+Profil MOŻE określać wymagania dotyczące minimalnego zakresu informacji lokalizacyjnej wymaganej dla zarządzania infrastrukturą techniczną.
+
+\subsection{Zarządzanie infrastrukturą i CMDB}
+Profil zarządzania infrastrukturą i CMDB definiuje zastosowanie modelu LEM w systemach ewidencji, inwentaryzacji oraz dokumentacji technicznej zasobów — obejmując monitorowanie zasobów, zarządzanie konfiguracją, utrzymanie infrastruktury oraz automatyzację procesów operacyjnych.
+
+System ewidencyjny MOŻE przechowywać informacje dodatkowe specyficzne dla własnej domeny, jednak informacje te NIE MOGĄ zmieniać interpretacji komponentów LEM. LEM NIE ZASTĘPUJE systemów zarządzania infrastrukturą — definiuje wyłącznie sposób jednoznacznego opisu znaczenia informacji lokalizacyjnej, umożliwiając interoperacyjność pomiędzy systemami o odmiennych strukturach danych.
+
+\subsection{Lokalizacja awaryjna}
+Profil usług lokalizacji awaryjnej definiuje zastosowanie modelu LEM w systemach wymagających przekazania informacji o lokalizacji dla celów bezpieczeństwa lub obsługi zdarzeń wymagających określenia fizycznego położenia.
+
+LEM NIE DEFINIUJE usług ratunkowych, procedur bezpieczeństwa publicznego, mechanizmów obsługi zgłoszeń awaryjnych ani metod wyznaczania lokalizacji, i NIE ZASTĘPUJE istniejących standardów oraz systemów przeznaczonych do obsługi usług alarmowych. Rolą LEM jest reprezentacja oraz interpretacja informacji wynikowej dostarczonej przez system lokalizacyjny, zgodnie z zasadami modelu semantycznego określonymi w Rozdziale 2.
+
+Profil MOŻE określać minimalny zakres informacji wymagany dla jednoznacznego określenia lokalizacji w danym środowisku. Ze względu na wagę tej domeny profil ten powinien szczególnie uwzględniać zasady dotyczące prywatności informacji lokalizacyjnej określone w sekcjach 6.3, 6.6 i 6.7.
+
+\subsubsection{4.3.3.1. Przykładowe rozpisanie profilu (informacyjne)}
+Poniżej przedstawiono jeden, w pełni rozpisany przykład profilu „Lokalizacja awaryjna” — od wymagań, przez formalny schemat, po przetestowane przykłady zgodne i niezgodne. Ma to charakter wyłącznie ilustracyjny; rzeczywisty profil dla konkretnego wdrożenia powinien zostać ustalony przez podmiot odpowiedzialny za dane środowisko (zob. 4.1).
+
+Wymagania komponentów (zgodnie z zasadą „Jednoznaczność wymagań”, 4.2):
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{|l|l|p{7cm}|}
+\hline
+\textbf{Komponent} & \textbf{Status w profilu} & \textbf{Uzasadnienie} \\ \hline
+Building & Wymagany & Zespół ratunkowy musi wiedzieć, do którego budynku się udać. \\ \hline
+Level & Wymagany & Kondygnacja jest krytyczna dla nawigacji w budynkach wielopiętrowych. \\ \hline
+Reference Space & Wymagany & Pomieszczenie/przestrzeń referencyjna jest minimalną jednostką lokalizacji użyteczną operacyjnie. \\ \hline
+Site & Opcjonalny & Istotny wyłącznie w organizacjach wielokampusowych; jeśli obecny, zwiększa jednoznaczność. \\ \hline
+Relative Position & Opcjonalny (zalecany) & Zwiększa precyzję w obrębie Reference Space, lecz nie jest niezbędny do podjęcia interwencji. \\ \hline
+\end{tabular}
+\caption{Wymagania komponentów dla profilu lokalizacji awaryjnej}
+\label{tab:emergency_profile}
+\end{table}
+
+Statusy w tabeli określają kompletność danych wymaganą przez profil. Nie określają sposobu obsługi nieznanych rozszerzeń reprezentacji.
+
+Formalny schemat (JSON Schema, informacyjny), rozszerzający szkielet strukturalny modelu podstawowego (2.5.6) przez \texttt{allOf}:
+
+\begin{verbatim}
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://w3id.org/lem/1.0/profile/emergency",
+  "title": "LEM — profil: Lokalizacja awaryjna (zob. 4.3.3)",
+  "allOf": [
+    { "$ref": "https://w3id.org/lem/1.0/schema/core" }
+  ],
+  "required": [
+    "building",
+    "level",
+    "referenceSpace"
+  ]
+}
+\end{verbatim}
+
+Przykład zgodny z profilem:
+\begin{verbatim}
+{
+  "site": "Main Campus",
+  "building": "Engineering Center",
+  "level": {
+    "kind": "numeric",
+    "value": 2
+  },
+  "referenceSpace": "Room201",
+  "relativePosition": "East side, near window"
+}
+\end{verbatim}
+
+Przykład niezgodny z profilem (lecz zgodny z modelem podstawowym LEM):
+\begin{verbatim}
+{
+  "site": "Main Campus",
+  "building": "Engineering Center"
+}
+\end{verbatim}
+
+\textbf{Uwaga dot. weryfikacji.} Powyższy przykład „niezgodny” został celowo tak dobrany, aby zaprezentować regułę z sekcji 4.4.3: zweryfikowany względem szkieletu modelu podstawowego (2.5.6) dokument ten dał wynik POPRAWNE — to w pełni ważny opis LEM (opis częściowy, zob. 2.4.4). Ten sam dokument zweryfikowany względem schematu profilu dał wynik NIEPOPRAWNE, z dwoma konkretnymi błędami: brakiem pól \texttt{level} i \texttt{referenceSpace}. Jest to bezpośrednie potwierdzenie zasady 4.4.3: „Informacja może być poprawną reprezentacją LEM, lecz jednocześnie nie spełniać wymagań konkretnego profilu zastosowania.”
+
+\subsection{Systemy indoor positioning}
+Profil systemów indoor positioning definiuje zastosowanie modelu LEM w środowiskach lokalizacji wewnętrznej, w których położenie określane jest względem przestrzeni referencyjnych oraz relacji przestrzennych.
+
+Profil NIE DEFINIUJE technologii wyznaczania pozycji ani metod pomiarowych. Określa wyłącznie sposób wyrażenia informacji lokalizacyjnej zgodnie z modelem LEM. LEM NIE DEFINIUJE metod pomiaru ani algorytmów lokalizacyjnych wykorzystywanych przez systemy dostarczające dane wejściowe.
+
+\subsection{Dokumentacja techniczna}
+LEM MOŻE być wykorzystywany do tworzenia spójnych opisów lokalizacji elementów infrastruktury w dokumentacji technicznej, systemach ewidencyjnych oraz narzędziach wspierających utrzymanie infrastruktury.
+
+Informacja zgodna z LEM MOŻE być przechowywana lub prezentowana w różnych systemach dokumentacyjnych przy zachowaniu tej samej interpretacji semantycznej. LEM NIE DEFINIUJE formatów dokumentacji, narzędzi dokumentacyjnych, metod tworzenia dokumentacji ani procesów zarządzania zmianą dokumentacji technicznej.
+
+\subsection{Automatyzacja i orkiestracja}
+LEM MOŻE być wykorzystywany jako warstwa semantyczna dla systemów automatyzacji i orkiestracji wymagających dostępu do informacji o lokalizacji elementów infrastruktury. Informacja lokalizacyjna zgodna z LEM MOŻE być wykorzystywana przez systemy zewnętrzne jako dane wejściowe do realizacji procesów automatycznych.
+
+LEM NIE DEFINIUJE mechanizmów automatyzacji, reguł sterowania, logiki orkiestracji ani sposobów wykorzystania informacji lokalizacyjnej przez systemy wykonawcze.
+
+\subsection{Inne domeny}
+Model LEM MOŻE być stosowany w innych domenach wymagających jednoznacznej reprezentacji lub wymiany informacji o lokalizacji (np. systemy automatyki budynkowej, systemy bezpieczeństwa, systemy dokumentacji przestrzennej, systemy analityczne, systemy orkiestracji zasobów), jeżeli sposób wykorzystania modelu zachowuje zgodność z zasadami określonymi w niniejszej specyfikacji.
+
+Nowe zastosowania NIE MOGĄ zmieniać znaczenia komponentów modelu LEM ani definiować alternatywnej interpretacji informacji lokalizacyjnej. Wymagania specyficzne dla określonej domeny POWINNY być definiowane poprzez profile LEM zgodnie z zasadami niniejszego rozdziału.
+
+\section{Ograniczenia i wymagania implementacyjne profili}
+Profile mogą określać wymagania implementacyjne wynikające ze specyfiki określonej domeny zastosowania. Wymagania te dotyczą sposobu wykorzystania modelu LEM i NIE STANOWIĄ rozszerzenia jego podstawowej semantyki.
+
+\subsection{Minimalny zakres informacji}
+Profil MOŻE określać minimalny zestaw komponentów wymaganych do obsługi informacji o lokalizacji zgodnie z danym zastosowaniem. Minimalny zakres informacji określony przez profil NIE ZMIENIA znaczenia komponentów modelu LEM.
+
+\subsection{Wymagane komponenty}
+Profil MOŻE określać komponenty modelu, których obecność jest wymagana w określonym zastosowaniu. Wymaganie obecności komponentu wynika z potrzeb konkretnego profilu i NIE OZNACZA, że komponent ten jest obowiązkowy w podstawowym modelu LEM.
+
+\subsection{Reguły walidacji profilu}
+Walidacja profilu jest procesem weryfikacji zgodności opisu lokalizacji z wymaganiami określonymi przez dany profil.
+
+Walidacja profilu jest niezależna od podstawowej interpretacji semantycznej modelu LEM. Informacja może być poprawną reprezentacją LEM, lecz jednocześnie nie spełniać wymagań konkretnego profilu zastosowania.
+
+\subsection{Specyficzne schematy danych}
+Profile MOGĄ definiować techniczne schematy danych, takie jak JSON Schema, typy pól, ograniczenia wartości, reguły walidacyjne oraz wymagania implementacyjne.
+
+Schematy te określają sposób wykorzystania modelu LEM w konkretnym środowisku i NIE STANOWIĄ rozszerzenia modelu semantycznego LEM.
+
+Poniższy szkielet JSON Schema ma charakter wyłącznie informacyjny i ilustruje, jak profil może formalnie wyrazić wymagania określone prozą w sekcjach 4.4.1–4.4.2:
+
+\begin{verbatim}
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://w3id.org/lem/1.0/profile/network-infrastructure",
+  "title": "Przykładowy profil: infrastruktura sieciowa",
+  "allOf": [
+    { "$ref": "https://w3id.org/lem/1.0/schema/core" },
+    {
+      "type": "object",
+      "required": ["building", "referenceSpace"],
+      "not": { "required": ["relativePosition"] }
+    }
+  ]
+}
+\end{verbatim}
+
+Zgodność danych z powyższym schematem stanowi walidację zgodności z profilem (zob. 4.4.3, 5.3) i jest niezależna od walidacji podstawowej zgodności semantycznej z modelem LEM określonej w sekcji 2.5.
+
+\section{Zgodność profili z modelem LEM}
+Każdy profil MUSI zachować zgodność z modelem semantycznym LEM określonym w Rozdziale 2.
+
+Profil NIE MOŻE:
+\begin{itemize}
+    \item zmieniać interpretacji komponentów modelu,
+    \item definiować alternatywnej semantyki informacji o lokalizacji,
+    \item wprowadzać nowych komponentów semantycznych,
+    \item traktować ograniczeń technicznych systemu zewnętrznego jako podstawy do rozszerzenia modelu LEM.
+\end{itemize}
+
+Zgodność z LEM jest niezależna od zgodności z wymaganiami konkretnego profilu. System MOŻE być poprawną reprezentacją informacji LEM, nawet jeżeli NIE REALIZUJE wymagań określonego profilu zastosowania.
+
+\section{Rozszerzanie i wersjonowanie profili}
+Profile LEM mogą ewoluować w czasie w odpowiedzi na zmieniające się wymagania domenowe. Ewolucja profili NIE MOŻE naruszać stabilności semantycznej podstawowego modelu LEM. Ogólne zasady klasyfikacji zmian modelu (korekcyjna / rozszerzająca / semantyczna) określone w Rozdziale 7 stosuje się odpowiednio do ewolucji profili.
+
+\subsection{Dziedziczenie profili}
+Profile MOGĄ tworzyć specjalizacje istniejących profili. Profil potomny MOŻE rozszerzać wymagania profilu nadrzędnego, lecz NIE MOŻE: zmieniać znaczenia komponentów odziedziczonych, usuwać interpretacji określonych przez profil nadrzędny, ani naruszać ograniczeń wynikających z profilu nadrzędnego.
+
+\subsection{Kompatybilność wsteczna}
+Ewolucja profilu NIE MOŻE prowadzić do zmiany interpretacji komponentów używanych w starszych wersjach profilu. Zmiany profilu powinny umożliwiać zachowanie zgodności istniejących implementacji wszędzie tam, gdzie nie zmienia się podstawowa semantyka modelu LEM.
+
+\subsection{Ewolucja profili domenowych}
+Profile domenowe MOGĄ być aktualizowane w odpowiedzi na zmieniające się potrzeby środowisk zastosowania. Aktualizacja profilu MUSI zachować: zgodność z modelem semantycznym LEM, stabilność interpretacji istniejących komponentów oraz możliwość jednoznacznego określenia różnic pomiędzy wersjami profilu.
+
+Ewolucja profili NIE MOŻE wymagać zmian w podstawowym modelu semantycznym LEM, jeżeli potrzeba zmiany wynika wyłącznie z wymagań konkretnej domeny zastosowania.

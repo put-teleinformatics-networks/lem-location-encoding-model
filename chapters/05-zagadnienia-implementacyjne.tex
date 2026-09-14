@@ -1,0 +1,42 @@
+% =====================================================================
+% Rozdział 5: Zagadnienia implementacyjne
+% =====================================================================
+
+\chapter{Zagadnienia implementacyjne}
+\label{chap:implementacja}
+
+\section{Przetwarzanie reprezentacji}
+Implementacja LEM MUSI umożliwiać odwzorowanie danych zapisanych w reprezentacji LEM na komponenty modelu semantycznego.
+Proces przetwarzania NIE MOŻE zmieniać interpretacji komponentów określonej w Rozdziale 2. Dotyczy to również opisów częściowych (zob. 2.4.4) — brak komponentu MUSI być odwzorowany jako brak informacji o mniejszej precyzji, a nie interpretowany jako błąd. Zasady postępowania z elementami nierozpoznanymi przez implementację są określone w sekcji 7.7.
+
+\section{Reprezentacja wewnętrzna implementacji}
+Implementacja MOŻE stosować wewnętrzne struktury danych różne od reprezentacji wymiany. Wewnętrzna reprezentacja NIE MOŻE wpływać na semantykę informacji LEM.
+
+\section{Walidacja danych}
+Implementacja MOŻE wykonywać walidację w następujących zakresach:
+
+\begin{itemize}
+    \item poprawność składniowa — zgodność zapisu ze strukturą wymaganą przez reprezentację,
+    \item zgodność z regułami reprezentacji — poprawność odwzorowania elementów reprezentacji na komponenty modelu (obejmuje ocenę kompletności danych wymaganej przez daną reprezentację),
+    \item zgodność z profilem zastosowania — spełnienie wymagań określonego profilu (zob. 4.4.3).
+\end{itemize}
+
+Walidacja NIE MOŻE definiować nowej interpretacji informacji.
+
+\section{Obsługa błędów}
+Implementacja MUSI rozróżniać kategorie błędów odpowiadające zakresom walidacji z sekcji 5.3:
+
+\begin{itemize}
+    \item błędy składni reprezentacji,
+    \item błędy zgodności z regułami reprezentacji,
+    \item błędy zgodności z profilem.
+\end{itemize}
+
+Sposób techniczny sygnalizowania tych kategorii błędów (kody błędów, mechanizmy raportowania itp.) pozostaje poza zakresem modelu LEM.
+
+Dane niepoprawne lub niejednoznaczne NIE MOGĄ być interpretowane jako poprawna informacja LEM — jest to bezpośrednia konsekwencja zasady jednoznaczności interpretacji określonej w sekcji 2.5.1.
+
+\section{Wersjonowanie i kompatybilność implementacji}
+Zmiany implementacyjne NIE MOGĄ powodować zmiany znaczenia komponentów modelu LEM.
+
+Implementacje POWINNY umożliwiać identyfikację wersji używanych reprezentacji oraz zachowanie możliwości przetwarzania danych zgodnych z wcześniejszymi wersjami modelu (zob. Rozdział 7).

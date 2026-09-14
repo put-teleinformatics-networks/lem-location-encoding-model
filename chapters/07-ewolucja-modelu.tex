@@ -1,0 +1,100 @@
+% =====================================================================
+% Rozdział 7: Ewolucja, rozszerzanie i wersjonowanie modelu LEM
+% =====================================================================
+
+\chapter{Ewolucja, rozszerzanie i wersjonowanie modelu LEM}
+\label{chap:ewolucja}
+
+\section{Klasyfikacja zmian modelu}
+Zmiany dotyczące modelu LEM MUSZĄ być klasyfikowane według ich wpływu na semantykę modelu. Poniższa klasyfikacja dotyczy zmian w modelu podstawowym; zasady ewolucji samych profili określa sekcja 4.6, która odwołuje się odpowiednio do niniejszej klasyfikacji.
+
+Wyróżnia się następujące typy zmian:
+
+\subsection{Zmiana korekcyjna}
+Zmiana korekcyjna usuwa niejednoznaczności, błędy dokumentacyjne lub poprawia opis istniejących elementów modelu.
+
+Zmiana korekcyjna NIE MOŻE zmieniać interpretacji komponentów modelu LEM ani wpływać na zgodne implementacje istniejących wersji.
+
+\subsection{Zmiana rozszerzająca}
+Zmiana rozszerzająca wprowadza nowe możliwości modelu przy zachowaniu istniejącej semantyki.
+
+Zmiana rozszerzająca MOŻE obejmować: dodanie nowych komponentów, dodanie nowych opcjonalnych właściwości, rozszerzenie zakresu obsługiwanych reprezentacji, dodanie nowych profili zastosowań.
+
+Zmiana rozszerzająca NIE MOŻE powodować zmiany znaczenia istniejących komponentów modelu LEM.
+
+\subsection{Zmiana semantyczna}
+Zmiana semantyczna wpływa na podstawowe znaczenie elementów modelu LEM.
+
+Przykłady zmian semantycznych obejmują: zmianę definicji istniejącego komponentu, zmianę relacji pomiędzy komponentami, zmianę zasad interpretacji kanonicznej, zmianę zasad określania równoważności semantycznej.
+
+Zmiana semantyczna MUSI być traktowana jako zmiana podstawowej wersji modelu LEM.
+
+\section{Zasady wersjonowania}
+Wersjonowanie LEM MUSI umożliwiać jednoznaczne określenie zgodności pomiędzy implementacjami wykorzystującymi model.
+
+Wersjonowanie powinno rozróżniać: wersję modelu semantycznego LEM, wersję zasad reprezentacji oraz wersję profili zastosowań.
+
+Zmiana wersji reprezentacji lub profilu NIE MOŻE powodować zmiany podstawowej semantyki modelu LEM.
+
+\section{Kompatybilność wersji}
+Implementacje LEM MUSZĄ określać wersję modelu semantycznego, według której interpretowane są dane lokalizacyjne.
+
+Dwie implementacje są zgodne semantycznie, jeżeli:
+\begin{itemize}
+    \item wykorzystują zgodną wersję modelu semantycznego LEM,
+    \item interpretują komponenty zgodnie z tym samym modelem znaczeniowym,
+    \item zachowują zasady interpretacji kanonicznej.
+\end{itemize}
+
+Różnice w wersjach reprezentacji lub profili mogą być obsługiwane niezależnie od wersji rdzenia semantycznego, o ile zachowana jest zgodność interpretacji.
+
+\section{Zasady rozszerzania modelu}
+Rozszerzenia modelu LEM MUSZĄ zachowywać istniejącą semantykę komponentów podstawowych.
+
+Nowy komponent lub właściwość:
+\begin{itemize}
+    \item NIE MOŻE zmieniać znaczenia istniejących komponentów,
+    \item NIE MOŻE powodować alternatywnej interpretacji istniejących danych,
+    \item MUSI posiadać jednoznacznie określone znaczenie.
+\end{itemize}
+
+Jeżeli wymagane jest wprowadzenie nowego znaczenia informacji lokalizacyjnej, zmiana MUSI zostać wykonana w modelu podstawowym LEM, a nie poprzez profil lub implementację lokalną.
+
+Niniejsza sekcja dotyczy rozszerzeń przeznaczonych do formalnego włączenia do modelu LEM. Rozszerzenia o charakterze lokalnym, niepodlegające takiemu włączeniu, opisuje sekcja 7.5.
+
+\section{Rozszerzenia prywatne i domenowe}
+Implementacje MOGĄ definiować rozszerzenia lokalne lub domenowe, przeznaczone wyłącznie do użytku w określonym środowisku i niepodlegające formalnemu włączeniu do modelu podstawowego, jeżeli rozszerzenia te:
+\begin{itemize}
+    \item nie zmieniają znaczenia komponentów zdefiniowanych przez LEM,
+    \item nie powodują niejednoznacznej interpretacji danych zgodnych z LEM,
+    \item są wyraźnie oddzielone od podstawowego modelu LEM.
+\end{itemize}
+
+Rozszerzenia lokalne NIE MOGĄ być traktowane jako standardowe komponenty LEM bez formalnego włączenia ich do modelu zgodnie z zasadami sekcji 7.4.
+
+\section{Proces zmian semantycznych}
+Zmiany wpływające na podstawową semantykę modelu LEM MUSZĄ podlegać szczególnej procedurze wersjonowania.
+
+Procedura ta MUSI zapewniać: identyfikację zakresu zmiany, określenie wpływu na istniejące implementacje, określenie zasad migracji oraz zachowanie możliwości interpretacji starszych danych.
+
+Zmiana semantyczna NIE MOŻE być wprowadzona wyłącznie poprzez zmianę reprezentacji lub profilu zastosowania.
+
+Sposób prowadzenia tego procesu w praktyce (np. organ decyzyjny, tryb konsultacji, publikacja zmian) pozostaje poza zakresem modelu LEM.
+
+\section{Obsługa nieznanych elementów}
+Implementacje LEM MUSZĄ rozróżniać elementy nieznane według ich znaczenia dla interpretacji danych. To, czy dany element ma dla implementacji charakter opcjonalny czy krytyczny, jest ustalane kontekstowo — na podstawie wymagań profilu zastosowania (zob. 4.2, 4.4.2), a nie odgórnie przez sam model LEM.
+
+\subsection{Element opcjonalny}
+Element opcjonalny, którego brak nie wpływa na interpretację podstawowej informacji lokalizacyjnej, MOŻE zostać pominięty przez implementację.
+
+\subsection{Element krytyczny}
+Element krytyczny, którego znaczenie jest wymagane do poprawnej interpretacji informacji lokalizacyjnej, NIE MOŻE zostać pominięty.
+
+Implementacja, która nie obsługuje elementu krytycznego, MUSI oznaczyć dane jako nieinterpretowalne lub niezgodne z obsługiwaną wersją modelu (zob. 5.4).
+
+\section{Stabilność modelu LEM}
+Rozwój modelu LEM MUSI zachowywać stabilność podstawowej semantyki.
+
+Zmiany modelu powinny preferować: rozszerzanie zamiast redefinicji, dodawanie nowych możliwości zamiast zmiany istniejących znaczeń, zachowanie kompatybilności istniejących danych.
+
+Podstawowym celem procesu ewolucji LEM jest zachowanie możliwości jednoznacznej interpretacji informacji lokalizacyjnej w kolejnych wersjach modelu.

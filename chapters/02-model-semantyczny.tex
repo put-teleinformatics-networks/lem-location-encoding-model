@@ -1,0 +1,288 @@
+% =====================================================================
+% Rozdział 2: Model semantyczny LEM
+% =====================================================================
+
+\chapter{Model semantyczny LEM}
+\label{chap:model}
+
+\section{Komponenty modelu}
+\label{sec:komponenty}
+\textit{Location} jest logiczną kompozycją komponentów semantycznych opisujących fizyczną lokalizację obiektu. Poszczególne komponenty dostarczają informacji o różnych aspektach lokalizacji i mogą występować niezależnie od siebie, z uwzględnieniem ograniczeń określonych w niniejszej specyfikacji.
+
+Model LEM definiuje zestaw komponentów semantycznych służących do opisu fizycznej lokalizacji obiektu. Każdy komponent reprezentuje określony aspekt informacji lokalizacyjnej i posiada niezależną semantykę. Komponenty mogą być stosowane pojedynczo lub łączone w celu uzyskania większego poziomu szczegółowości opisu lokalizacji.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[node distance=9mm and 8mm,
+  box/.style={draw,rounded corners,align=center,minimum width=25mm,minimum height=8mm},
+  arr/.style={-{Latex[length=2mm]},thick}]
+  \node[box] (entity) {Encja};
+  \node[box,right=of entity] (location) {Location};
+  \node[box,below left=of location] (site) {Site};
+  \node[box,below=of location] (building) {Building};
+  \node[box,below right=of location] (level) {Level};
+  \node[box,below=18mm of site] (ref) {Reference\\Space};
+  \node[box,below=18mm of level] (rel) {Relative\\Position};
+  \draw[arr] (entity) -- (location);
+  \draw[arr] (location) -- (site);
+  \draw[arr] (location) -- (building);
+  \draw[arr] (location) -- (level);
+  \draw[arr] (location) -- (ref);
+  \draw[arr] (location) -- (rel);
+  \draw[arr,dashed] (rel) -- node[below,sloped,font=\scriptsize]{względem} (ref);
+\end{tikzpicture}
+\caption{Rdzeń semantyczny modelu LEM}
+\label{fig:lem-core}
+\end{figure}
+
+O ile niniejsza specyfikacja nie określa inaczej, brak komponentu oznacza brak określonej informacji, a nie wartość domyślną (zob. sekcja \ref{sec:opisy-czesciowe}).
+
+Poniższe sekcje definiują znaczenie poszczególnych komponentów oraz podstawowe reguły ich wykorzystania. Zasady dotyczące zależności pomiędzy komponentami, wymagań minimalnych, walidacji semantycznej, przypadków niepełnej lokalizacji oraz konfliktu informacji są określone łącznie w sekcjach \ref{sec:kanoniczna-interpretacja} (Kanoniczna interpretacja) oraz \ref{sec:spojnosci-modelu} (Reguły spójności modelu).
+
+\subsection{Site}
+\label{sec:comp-site}
+\textit{Site} --- najwyższy poziom hierarchii lokalizacji, definiowany przez implementację.
+
+\subsection{Building}
+\label{sec:comp-building}
+\textit{Building} --- element hierarchii lokalizacji reprezentujący pojedynczy budynek lub inny wydzielony obiekt przestrzenny, definiowany przez implementację.
+
+\subsection{Level}
+\label{sec:comp-level}
+\textit{Level} --- element hierarchii lokalizacji reprezentujący poziom przestrzeni, definiowany przez implementację.
+
+\subsection{Reference Space}
+\label{sec:comp-refspace}
+\textit{Reference Space} --- jednoznacznie identyfikowalna przestrzeń stanowiąca punkt odniesienia do określenia położenia względnego obiektu.
+
+\subsection{Relative Position}
+\label{sec:comp-relpos}
+\textit{Relative Position} --- opis położenia obiektu względem zdefiniowanej przestrzeni referencyjnej.
+
+Znaczenie każdego komponentu oraz relacji pomiędzy nimi jest niezależne od reprezentacji, w której komponent został zapisany (zob. Rozdział 3).
+
+\subsection{Formalne typy danych komponentów (normatywne)}
+\label{sec:typy-danych}
+Lokalizacja encji jest reprezentowana przez pięć niezależnych komponentów. Każdy komponent ma zdefiniowany typ i semantykę. Wartości tekstowe zawierają od 1 do 256 punktów kodowych Unicode. UTF-8 \cite{RFC3629} jest kodowaniem stosowanym przez wybrane reprezentacje, a nie miarą długości semantycznej.
+
+\begin{description}
+    \item[Site:]
+    \begin{itemize}
+        \item \textbf{Typ:} \texttt{string}
+        \item \textbf{Semantyka:} nazwa lub identyfikator tekstowy miejsca/siedziby/kampusu, w obrębie którego znajduje się \textit{Building}.
+        \item \textbf{Wymaganie:} komponent opcjonalny w modelu podstawowym; profil może wymagać jego obecności.
+        \item \textbf{Uwaga projektowa (nie stanowi części modelu):} w przyszłych integracjach z systemami zewnętrznymi (CMDB, GIS) zaleca się rozróżnienie wartości prezentacyjnej (\texttt{name}) od stabilnego identyfikatora. Obecny model tego rozróżnienia nie wprowadza.
+    \end{itemize}
+
+    \item[Building:]
+    \begin{itemize}
+        \item \textbf{Typ:} \texttt{string}
+        \item \textbf{Semantyka:} nazwa lub identyfikator tekstowy budynku (lub równoważnego obiektu budowlanego) znajdującego się w \textit{Site}.
+        \item \textbf{Wymaganie:} komponent opcjonalny w modelu podstawowym.
+        \item \textbf{Uwaga projektowa:} analogicznie do \textit{Site}.
+    \end{itemize}
+
+    \item[Level:]
+    \begin{itemize}
+        \item \textbf{Typ:} struktura \texttt{Level} z polami \texttt{kind} oraz \texttt{value}.
+        \item \textbf{Semantyka:} 
+        \begin{itemize}
+            \item \texttt{kind = "numeric"} --- \texttt{value} jest wymagane i musi być liczbą całkowitą ze znakiem w zakresie od $-2^{31}$ do $2^{31}-1$. \texttt{0} oznacza poziom parteru / ground floor (konwencja modelu, niezależna od lokalnej numeracji źródłowej). Wartości dodatnie oznaczają kondygnacje nadziemne; wartości ujemne oznaczają kondygnacje podziemne.
+            \item \texttt{kind = "non-building"} --- \texttt{value} musi być \texttt{null}. Oznacza, że encja nie znajduje się na żadnej kondygnacji budynku (dach, parking naziemny, przestrzeń zewnętrzna, strefa pomiędzy budynkami itp.). Przestrzeń taka jest w takim wypadku dalej opisywana przez \textit{Reference Space} (np. \texttt{"Roof"}), a nie przez \texttt{value}.
+        \end{itemize}
+        \item \textbf{Wymaganie:} komponent opcjonalny w modelu podstawowym.
+        \item \textbf{Zakaz:} wartości ułamkowe oraz inne typy niż określone powyżej są niedozwolone. Przypadek antresoli pozostaje nieobsłużony przez model podstawowy.
+    \end{itemize}
+
+    \item[Reference Space:]
+    \begin{itemize}
+        \item \textbf{Typ:} \texttt{string}
+        \item \textbf{Semantyka:} nazwana lub w inny sposób określona przestrzeń stanowiąca kontekst lokalizacyjny dla encji --- pomieszczenie, sala, pokój, korytarz, hala, parking, dach, strefa zewnętrzna lub inna przestrzennie znacząca jednostka. \textit{Reference Space} nie jest ograniczony do pojęcia „pomieszczenie”.
+        \item \textbf{Wymaganie:} komponent opcjonalny. Pusty ciąg jest niedozwolony; brak informacji wyraża się nieobecnością komponentu.
+    \end{itemize}
+
+    \item[Relative Position:]
+    \begin{itemize}
+        \item \textbf{Typ:} \texttt{string}
+        \item \textbf{Semantyka:} opis pozycji encji względem \textit{Reference Space} (np. \texttt{"przy oknie"}, \texttt{"wschodnia ściana"}, \texttt{"nad szafą R1"}, \texttt{"centralnie"}, \texttt{"przy wejściu"}). Wartość jest opisem relacyjnym --- model nie wymaga ani nie narzuca reprezentacji współrzędnych.
+        \item \textbf{Wymaganie:} pole opcjonalne. Zgodnie z sekcją \ref{sec:spojnosc-przestrzenna}, jeżeli obecne, wymaga obecności \textit{Reference Space} w tym samym opisie.
+    \end{itemize}
+\end{description}
+
+\noindent \textbf{Wspólne reguły:}
+\begin{itemize}
+    \item Wszystkie wartości tekstowe mają długość od 1 do 256 punktów kodowych Unicode. Limit liczby oktetów jest właściwością reprezentacji.
+    \item Poprawny opis zawiera co najmniej jeden komponent rdzenia.
+    \item Komponenty są niezależne --- brak wartości w jednym polu nie unieważnia pozostałych (zob. sekcja \ref{sec:opisy-czesciowe}).
+    \item Model nie definiuje hierarchii referencyjnej (encje Site/Building jako obiekty odrębne od swoich wartości tekstowych). Komponenty pełnią wyłącznie rolę lokalizacyjną.
+\end{itemize}
+
+\section{Relacje pomiędzy komponentami}
+\label{sec:relacje}
+Komponenty modelu LEM są powiązane relacjami (zob. Appendix A.6). Relacje w modelu LEM są kierunkowe (zob. Appendix A.13) --- kolejność elementów uczestniczących w relacji stanowi część jej znaczenia semantycznego i nie może być pomijana podczas interpretacji.
+
+Przykładowo, relacja \texttt{located\_in(Object, ReferenceSpace)} posiada inne znaczenie niż relacja odwrotna \texttt{contains(ReferenceSpace, Object)}. Zachowanie kierunku relacji jest warunkiem poprawnej interpretacji opisu lokalizacji zgodnie z zasadami określonymi w sekcji \ref{sec:spojnosc-przestrzenna}.
+
+\section{Klasyfikacja przestrzeni referencyjnych}
+\label{sec:klasyfikacja-przestrzeni}
+Przestrzeń referencyjna określa rodzaj przestrzeni wykorzystywanej jako odniesienie dla opisu relacji przestrzennej w modelu LEM.
+
+Klasyfikacja przestrzeni referencyjnych służy organizacji możliwych kategorii odniesienia i nie definiuje zamkniętego zbioru typów przestrzeni. LEM nie określa wyczerpującej listy klas przestrzeni referencyjnych. Implementacje mogą definiować dodatkowe klasy zgodnie z wymaganiami określonego zastosowania, o ile zachowana zostaje semantyka modelu LEM.
+
+Klasyfikacja przestrzeni referencyjnych nie wpływa na znaczenie informacji o lokalizacji. Znaczenie opisu informacji o lokalizacji wynika z interpretacji komponentów modelu LEM oraz relacji pomiędzy nimi zgodnie z zasadami określonymi w sekcji \ref{sec:kanoniczna-interpretacja}.
+
+Przynależność przestrzeni referencyjnej do określonej klasy nie zmienia sposobu interpretacji relacji \textit{Relative Position}, o której mowa w sekcji \ref{sec:spojnosc-przestrzenna} --- klasyfikacja ma charakter porządkujący, a nie znaczeniowy.
+
+\section{Kanoniczna interpretacja}
+\label{sec:kanoniczna-interpretacja}
+Kanoniczna interpretacja definiuje deterministyczną postać opisu po zdekodowaniu reprezentacji. Nie rozstrzyga, czy różne nazwy naturalnojęzykowe oznaczają ten sam obiekt.
+
+\subsection{Cel interpretacji kanonicznej}
+\label{sec:cel-interpretacji}
+Kanoniczna interpretacja umożliwia porównanie poprawnych reprezentacji bez zależności od kolejności pól, formatowania lub technologii transportu.
+
+\subsection{Interpretacja opisu informacji}
+\label{sec:interpretacja-opisu}
+Po poprawnym zdekodowaniu opisu $D$ jego postać kanoniczna jest uporządkowaną krotką częściową
+\[
+C(D)=(S?,B?,L?,R?,P?),
+\]
+gdzie symbole odpowiadają kolejno komponentom \textit{Site}, \textit{Building}, \textit{Level}, \textit{Reference Space} i \textit{Relative Position}, a znak zapytania oznacza możliwość nieobecności wartości. Nieobecność nie jest wartością pustą ani domyślną.
+
+Wartości tekstowe w $C(D)$ są dokładnymi ciągami Unicode dostarczonymi przez reprezentację. Model podstawowy nie wykonuje automatycznego przycinania białych znaków, zmiany wielkości liter, tłumaczenia, rozwijania skrótów ani rozpoznawania synonimów. Profil może zdefiniować jawne reguły normalizacji lub stabilne identyfikatory, ale muszą one poprzedzać utworzenie $C(D)$ i być identycznie stosowane przez porównywane implementacje.
+
+\subsection{Równoważność semantyczna}
+\label{sec:rownowaznosc-semantyczna}
+Dwa poprawne opisy $D_1$ i $D_2$ są równoważne w modelu podstawowym wtedy i tylko wtedy, gdy $C(D_1)=C(D_2)$, tj. zawierają dokładnie ten sam podzbiór komponentów i identyczne wartości po zdekodowaniu.
+
+Na równoważność semantyczną nie wpływają:
+\begin{itemize}[noitemsep,topsep=2pt]
+    \item kolejność występowania komponentów w opisie informacji o lokalizacji,
+    \item sposób reprezentacji informacji,
+    \item format zapisu informacji,
+    \item obecność dodatkowych informacji niezdefiniowanych przez model LEM, o ile są oddzielone od komponentów rdzenia i nie wpływają na ich dekodowanie.
+\end{itemize}
+
+\subsection{Opisy częściowe}
+\label{sec:opisy-czesciowe}
+Opis informacji o lokalizacji może zawierać dowolny niepusty podzbiór komponentów zdefiniowanych przez model LEM, z zastrzeżeniem, że \textit{Relative Position} wymaga obecności \textit{Reference Space}.
+
+Brak komponentu oznacza brak określonej informacji w danym zakresie i nie stanowi naruszenia modelu LEM.
+
+Opis częściowy reprezentuje mniejszy zakres informacji o lokalizacji niż opis zawierający dodatkowe komponenty, lecz pozostaje poprawnym opisem semantycznym.
+
+Wymagania dotyczące minimalnego zakresu informacji dla określonych zastosowań mogą być definiowane poza modelem LEM --- w szczególności poprzez profile zastosowań (Rozdział 4).
+
+\noindent \textbf{Uwaga dot. prywatności:} Nawet opis częściowy, ograniczony do niewielkiej liczby komponentów, może w określonym kontekście stanowić informację wystarczającą do pośredniej identyfikacji osoby lub zasobu. Model LEM pozostaje neutralny wobec tej oceny (zob. sekcja 6.6), lecz profile zastosowań powinny brać ten aspekt pod uwagę przy określaniu minimalnego i maksymalnego zakresu ujawnianych komponentów.
+
+\subsection{Granica odpowiedzialności interpretacji}
+\label{sec:kanoniczna-pojecie}
+LEM gwarantuje jednoznaczność struktury i roli komponentów, ale nie ontologiczną tożsamość dowolnych wartości tekstowych. Przykładowo \texttt{"Room 201"}, \texttt{"201"} i \texttt{"Sala 201"} są różnymi wartościami, dopóki wspólny profil lub rejestr zewnętrzny nie zdefiniuje ich jako aliasów tego samego identyfikatora.
+
+\section{Reguły spójności modelu}
+\label{sec:spojnosci-modelu}
+LEM definiuje reguły spójności semantycznej opisów informacji o lokalizacji.
+
+Reguły te określają warunki, które muszą być spełnione, aby opis informacji o lokalizacji pozostawał zgodny z modelem LEM.
+
+LEM nie definiuje reguł poprawności formatów reprezentacji ani metod weryfikacji danych źródłowych. Ocena spójności odnosi się wyłącznie do znaczenia informacji wyrażonej za pomocą komponentów modelu.
+
+\subsection{Jednoznaczność interpretacji}
+\label{sec:jednoznacznosc}
+Każdy komponent rdzenia może wystąpić najwyżej raz. Reprezentacja dopuszczająca duplikaty musi je odrzucić przed utworzeniem postaci kanonicznej; nie może wybierać jednej z konkurencyjnych wartości.
+
+\subsection{Interpretowalność komponentów}
+\label{sec:interpretowalnosc}
+Każdy komponent musi spełniać typ i dziedzinę wartości z sekcji \ref{sec:typy-danych}. Profil może zawęzić tę dziedzinę, lecz nie może zmienić typu ani znaczenia komponentu.
+
+\subsection{Spójność relacji przestrzennych}
+\label{sec:spojnosc-przestrzenna}
+\textit{Relative Position} nie definiuje samodzielnej lokalizacji. Jego obecność bez \textit{Reference Space} powoduje odrzucenie opisu.
+
+\subsection{Brak sprzeczności semantycznej}
+\label{sec:brak-sprzecznosci}
+Model podstawowy wykrywa sprzeczności strukturalne: duplikat komponentu, wartość spoza dziedziny, niepoprawną parę \texttt{Level.kind/value} oraz \textit{Relative Position} bez \textit{Reference Space}. Sprzeczności domenowe, np. nieistniejący numer pomieszczenia w danym budynku, wymagają profilu lub rejestru zewnętrznego.
+
+\subsection{Zakres odpowiedzialności implementacji}
+\label{sec:odpowiedzialnosc-impl}
+LEM definiuje reguły spójności semantycznej modelu informacji o lokalizacji.
+
+Wymagania dotyczące kompletności informacji, ograniczeń domenowych oraz dodatkowych warunków poprawności mogą być definiowane poza modelem LEM.
+
+Takie wymagania nie zmieniają podstawowej semantyki komponentów ani zasad interpretacji określonych przez LEM.
+
+\subsection{Notacja formalna reguł spójności (informacyjna)}
+\label{sec:notacja-formalna}
+\textbf{Wybór notacji i uzasadnienie.} Poniższa sekcja przyjmuje dwuwarstwowe podejście: (1) szkielet strukturalny w postaci JSON Schema Draft 2020-12 \cite{JSONSchema202012}, definiujący kształt i typy poprawnego opisu lokalizacji LEM w reprezentacji JSON, oraz (2) pseudokod dla tych reguł spójności, których JSON Schema z zasady nie potrafi wyrazić. Wybrano ten układ z trzech powodów:
+\begin{enumerate}
+    \item \textbf{Dostępność narzędzi:} Dla JSON Schema istnieją gotowe, szeroko stosowane walidatory w niemal każdym języku programowania.
+    \item \textbf{Spójność z resztą dokumentu:} Sekcja 4.4.4 wprowadza już JSON Schema jako mechanizm wyrażania wymagań profilu.
+    \item \textbf{Świadome ograniczenie zakresu:} JSON Schema (Draft 2020-12) obsługuje warunki międzypolowe; reguły wykraczające poza strukturę dokumentu pozostają w pseudokodzie.
+\end{enumerate}
+
+\subsubsection*{(1) Szkielet strukturalny (JSON Schema, informacyjny)}
+
+\begin{verbatim}
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://w3id.org/lem/1.0/schema/core",
+  "title": "LEM -- szkielet strukturalny opisu lokalizacji",
+  "type": "object",
+  "properties": {
+    "site":     { "type": "string", "minLength": 1, "maxLength": 256 },
+    "building": { "type": "string", "minLength": 1, "maxLength": 256 },
+    "level": {
+      "type": "object",
+      "properties": {
+        "kind":  { "enum": ["numeric", "non-building"] },
+        "value": { "type": ["integer", "null"],
+                   "minimum": -2147483648, "maximum": 2147483647 }
+      },
+      "required": ["kind", "value"],
+      "if":   { "properties": { "kind": { "const": "numeric" } } },
+      "then": { "properties": { "value": { "type": "integer" } } },
+      "else": { "properties": { "value": { "type": "null" } } }
+    },
+    "referenceSpace":   { "type": "string", "minLength": 1, "maxLength": 256 },
+    "relativePosition": { "type": "string", "minLength": 1, "maxLength": 256 }
+  },
+  "additionalProperties": true,
+  "anyOf": [
+    { "required": ["site"] }, { "required": ["building"] },
+    { "required": ["level"] }, { "required": ["referenceSpace"] },
+    { "required": ["relativePosition"] }
+  ],
+  "dependentRequired": {
+    "relativePosition": ["referenceSpace"]
+  }
+}
+\end{verbatim}
+
+Konstrukcja \texttt{if/then/else} dla \textit{level} odwzorowuje regułę: dla \texttt{kind = "numeric"} pole \texttt{value} musi być liczbą całkowitą; dla \texttt{kind = "non-building"} musi być \texttt{null}.
+\texttt{additionalProperties: true} odzwierciedla zasadę „Autonomia formatu” (Rozdział 3.1). \texttt{minProperties: 1} odzwierciedla, że pusty opis lokalizacji nie stanowi poprawnego opisu częściowego (zob. sekcja \ref{sec:opisy-czesciowe}).
+
+\textbf{Uwaga dot. weryfikacji:} Pełny schemat w pliku \texttt{schemas/lem-core.schema.json} oraz dwa schematy profili zweryfikowano względem metaskematu JSON Schema Draft 2020-12 przy użyciu biblioteki \texttt{jsonschema 4.26.0}. Do pakietu dołączono 20 wektorów pozytywnych i negatywnych obejmujących m.in. granice \texttt{int32}, strukturę \textit{Level}, zależność \textit{Relative Position}/\textit{Reference Space}, puste opisy i wymagania profili. Skrypt \texttt{tests/validate.py} odtwarza wynik walidacji.
+
+\subsubsection*{(2) Pseudokod tworzenia i porównania postaci kanonicznej}
+Poniższy pseudokod nie próbuje odgadywać znaczenia dowolnych wartości tekstowych.
+
+\begin{verbatim}
+decode(R):
+    reject duplicate core components in representation R
+    D := map representation fields to the five LEM components
+    require D contains at least one core component
+    require all values satisfy their LEM value domains
+    require RelativePosition not in D or ReferenceSpace in D
+    return D
+
+canonical(R):
+    D := decode(R)
+    return tuple(D.Site?, D.Building?, D.Level?,
+                 D.ReferenceSpace?, D.RelativePosition?)
+
+equivalent(R1, R2) <==> canonical(R1) == canonical(R2)
+\end{verbatim}
+
+\section{Zakres odpowiedzialności modelu LEM}
+\label{sec:odpowiedzialnosc}
+Model LEM definiuje wyłącznie semantykę informacji lokalizacyjnej. LEM \textbf{NIE} definiuje: mechanizmów identyfikacji, metod pozyskiwania danych, technologii pomiarowych, systemów zarządzania ani procesów decyzyjnych.

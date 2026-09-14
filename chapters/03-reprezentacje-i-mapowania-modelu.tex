@@ -1,0 +1,454 @@
+% =====================================================================
+% Rozdział 3: Reprezentacje i mapowania modelu
+% =====================================================================
+
+\chapter{Reprezentacje i mapowania modelu}
+\label{chap:reprezentacje}
+
+\section{Zasady reprezentacji modelu}
+\label{sec:zasady-reprezentacji}
+Model LEM definiuje znaczenie informacji o lokalizacji niezależnie od sposobu jej zapisu lub przekazu. Reprezentacja modelu określa sposób wyrażenia komponentów modelu LEM w określonym formacie danych lub mechanizmie wymiany informacji.
+
+Wszystkie reprezentacje modelu LEM podlegają następującym zasadom:
+
+\begin{itemize}
+    \item \textbf{Niezmienność semantyki:} Reprezentacja musi wiernie odwzorowywać znaczenie komponentów zdefiniowanych w Rozdziale 2. Reprezentacja nie może wprowadzać nowych elementów semantycznych ani zmieniać definicji istniejących komponentów.
+    \item \textbf{Jednoznaczność odwzorowania:} Każda reprezentacja musi umożliwiać jednoznaczne odwzorowanie zapisanych danych na komponenty modelu LEM.
+    \item \textbf{Spójność z interpretacją kanoniczną:} Każda reprezentacja informacji LEM musi prowadzić do interpretacji zgodnej z interpretacją kanoniczną określoną w sekcji 2.4.5. Reprezentacja sprzeczna z interpretacją kanoniczną nie jest poprawną reprezentacją modelu LEM.
+    \item \textbf{Równoważność reprezentacji:} Różne reprezentacje są semantycznie równoważne, jeżeli posiadają tę samą interpretację semantyczną zgodnie z zasadami określonymi w sekcji 2.4.3.
+    \item \textbf{Autonomia formatu:} Reprezentacja może zawierać informacje dodatkowe, w tym metadane techniczne, o ile informacje te nie wpływają na interpretację komponentów modelu LEM.
+    \item \textbf{Brak rozszerzenia modelu:} Reprezentacja lub mapowanie nie może rozszerzać znaczenia modelu LEM ani wprowadzać nowych komponentów informacji o lokalizacji. Dotyczy to również ograniczeń technicznych narzucanych przez format lub system zewnętrzny --- ograniczenie techniczne nigdy nie stanowi rozszerzenia semantyki modelu (zob. 4.5).
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[node distance=9mm and 10mm,
+  box/.style={draw,rounded corners,align=center,minimum width=23mm,minimum height=8mm},
+  arr/.style={-{Latex[length=2mm]},thick}]
+  \node[box] (core) {Rdzeń LEM};
+  \node[box,above left=of core] (json) {JSON};
+  \node[box,above=of core] (tlv) {TLV};
+  \node[box,above right=of core] (yang) {YANG};
+  \node[box,below left=of core] (civic) {Civic /\\PIDF-LO};
+  \node[box,below=of core] (geo) {GeoJSON};
+  \node[box,below right=of core] (dns) {DNS-safe\\alias};
+  \draw[arr] (core) -- (json);
+  \draw[arr] (core) -- (tlv);
+  \draw[arr] (core) -- (yang);
+  \draw[arr] (core) -- (civic);
+  \draw[arr] (core) -- (geo);
+  \draw[arr,dashed] (core) -- (dns);
+\end{tikzpicture}
+\caption{Rdzeń semantyczny i jego reprezentacje oraz mapowania}
+\label{fig:lem-representations}
+\end{figure}
+
+\section{Reprezentacja tekstowa (Human-readable)}
+\label{sec:reprezentacja-tekstowa}
+Reprezentacja tekstowa służy do czytelnego przedstawienia informacji o lokalizacji zdefiniowanej przez model LEM.
+
+Reprezentacja tekstowa przedstawia komponenty modelu LEM w formie przeznaczonej do interpretacji przez człowieka. Sposób rozmieszczenia informacji, kolejność występowania komponentów, stosowane separatory lub formatowanie graficzne nie wpływają na znaczenie opisu informacji o lokalizacji.
+
+Znaczenie reprezentacji tekstowej wynika wyłącznie z obecnych komponentów modelu LEM oraz ich interpretacji semantycznej.
+
+\noindent \textbf{Przykład informacyjny:}
+\begin{verbatim}
+Site: Main Campus
+Building: Engineering Center
+Level: 2
+Reference Space: Room 201
+Relative Position: East side
+\end{verbatim}
+
+Powyższy zapis przedstawia informację o lokalizacji w sposób czytelny dla człowieka. Konkretna forma prezentacji nie stanowi części modelu semantycznego LEM.
+
+\section{Reprezentacja binarna (Compact / TLV)}
+\label{sec:reprezentacja-binarna}
+Reprezentacja binarna umożliwia wyrażenie informacji LEM w postaci zwartej struktury danych przeznaczonej do wymiany lub przechowywania informacji.
+
+Mechanizm kodowania binarnego nie definiuje znaczenia informacji o lokalizacji. Znaczenie każdego elementu reprezentacji wynika z odwzorowania na komponenty modelu LEM.
+
+Reprezentacja binarna może wykorzystywać mechanizmy takie jak Type-Length-Value (TLV) --- wzorzec kodowania rozpoznawalny formalnie m.in. z rekomendacji ITU-T X.690 \cite{ITU-X690} (zob. Załącznik B) --- jednak sposób przypisania typów, kodowania wartości oraz organizacji struktury danych należy do określonej specyfikacji reprezentacji lub profilu implementacyjnego.
+
+W reprezentacji binarnej:
+\begin{itemize}
+    \item typ elementu reprezentacji odpowiada komponentowi modelu LEM,
+    \item wartość elementu reprezentacji odpowiada wartości określonego komponentu,
+    \item sposób kodowania wartości nie zmienia znaczenia komponentu.
+\end{itemize}
+
+Poprawna reprezentacja binarna musi prowadzić do tej samej interpretacji semantycznej, jaka wynikaby z dowolnej innej poprawnej reprezentacji informacji LEM.
+
+\noindent \textbf{Przykład informacyjny} (profil kodowania TLV zdefiniowany poniżej: T = 1 oktet, L = 2 oktety big-endian, V = wartość; \textit{Level} używa jednego oktetu \texttt{kind} oraz czterech oktetów \texttt{int32} dla wartości numerycznej):
+
+\begin{verbatim}
+Typ (T)  Nazwa komponentu     Długość (L)  Wartość (V)
+0x01     Site                 0x000B       "Main Campus"
+0x02     Building             0x0012       "Engineering Center"
+0x03     Level                0x0005       0x01 00000002
+0x04     Reference Space      0x0007       "Room201"
+0x05     Relative Position    0x0009       "East side"
+\end{verbatim}
+
+\noindent \textbf{Ciąg oktetów (zapis szesnastkowy):}
+\begin{verbatim}
+01 00 0B 4D 61 69 6E 20 43 61 6D 70 75 73
+02 00 12 45 6E 67 69 6E 65 65 72 69 6E 67 20 43 65 6E 74 65 72
+03 00 05 01 00 00 00 02
+04 00 07 52 6F 6F 6D 32 30 31
+05 00 09 45 61 73 74 20 73 69 64 65
+\end{verbatim}
+
+Powyższe przypisanie wartości typu (T) do konkretnego komponentu (np. \texttt{0x03} $\rightarrow$ Level) jest elementem konkretnej specyfikacji reprezentacji lub profilu implementacyjnego, a nie częścią modelu semantycznego LEM --- inny profil binarny może przypisać te same komponenty do innych wartości T, pozostając równoważny semantycznie (zob. 2.4.3), o ile odwzorowanie na komponenty modelu jest jednoznaczne.
+
+\subsection{Formalny rejestr typów (informacyjny)}
+\label{sec:rejestr-typow}
+Poniższy rejestr formalizuje powyższy przykład:
+\begin{enumerate}
+    \item Pole L ma 2 oktety, co pozwala opisać pełny zakres długości reprezentacji UTF-8.
+    \item Kodowanie Level odzwierciedla strukturę kind+value i wspólną dziedzinę \texttt{int32}.
+    \item Relative Position jest zwykłym ciągiem UTF-8, bez podtypu.
+\end{enumerate}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{|l|l|p{8cm}|}
+\hline
+\textbf{T (1 oktet)} & \textbf{Komponent} & \textbf{Kodowanie wartości (V)} \\ \hline
+0x01 & Site & UTF-8 \cite{RFC3629}, 1--1024 oktetów; po dekodowaniu 1--256 punktów kodowych Unicode \\ \hline
+0x02 & Building & UTF-8 \cite{RFC3629}, 1--1024 oktetów; po dekodowaniu 1--256 punktów kodowych Unicode \\ \hline
+0x03 & Level & 1 oktet kind (0x01=numeric, 0x02=non-building) + dla numeric dokładnie 4 oktety liczby \texttt{int32} ze znakiem, uzupełnienie do dwóch, big-endian; dla non-building brak dalszych oktetów \\ \hline
+0x04 & Reference Space & UTF-8 \cite{RFC3629}, 1--1024 oktetów; po dekodowaniu 1--256 punktów kodowych Unicode \\ \hline
+0x05 & Relative Position & UTF-8 \cite{RFC3629}, 1--1024 oktetów; po dekodowaniu 1--256 punktów kodowych Unicode \\ \hline
+\end{tabular}
+\end{table}
+
+\noindent \textbf{Format nagłówka:} T (1 oktet) + L (2 oktety, big-endian, długość V w oktetach) + V.\\
+Reguły spójności 2.5.1–2.5.4 stosuje się do zbioru zdekodowanych komponentów dokładnie tak samo, jak w przypadku reprezentacji JSON (zob. 2.5.6).
+
+\section{Reprezentacja JSON}
+\label{sec:reprezentacja-json}
+Reprezentacja JSON umożliwia wyrażenie informacji LEM przy użyciu struktury danych JSON. JSON stanowi wyłącznie sposób reprezentacji komponentów modelu LEM i nie definiuje własnej semantyki informacji o lokalizacji.
+
+Reprezentacja używa JSON zgodnego z \cite{RFC8259}. Parser MUSI odrzucać obiekty zawierające zduplikowane nazwy właściwości rdzenia, zanim zostanie utworzona postać kanoniczna.
+
+Struktura JSON musi umożliwiać jednoznaczne odwzorowanie elementów reprezentacji na komponenty modelu LEM.
+
+Nazwy właściwości, struktura obiektu oraz sposób kodowania wartości są elementami reprezentacji i nie mogą zmieniać znaczenia komponentów zdefiniowanych w modelu LEM.
+
+Dwa dokumenty JSON są semantycznie równoważne, jeżeli ich interpretacja prowadzi do tej samej interpretacji kanonicznej modelu LEM.
+
+Różnice w:
+\begin{itemize}[noitemsep,topsep=2pt]
+    \item kolejności właściwości obiektu JSON,
+    \item sposobie formatowania dokumentu,
+    \item technicznej reprezentacji wartości, jeżeli zachowana jest równoważność znaczenia,
+\end{itemize}
+nie wpływają na równoważność semantyczną informacji.
+
+\noindent \textbf{Przykład informacyjny:}
+\begin{verbatim}
+{
+  "site": "Main Campus",
+  "building": "Engineering Center",
+  "level": { "kind": "numeric", "value": 2 },
+  "referenceSpace": "Room201",
+  "relativePosition": "East side"
+}
+\end{verbatim}
+
+Poniższy dokument jest semantycznie równoważny powyższemu (inna kolejność właściwości, inne formatowanie):
+\begin{verbatim}
+{
+  "level": { "value": 2, "kind": "numeric" },
+  "site": "Main Campus",
+  "relativePosition": "East side",
+  "referenceSpace": "Room201",
+  "building": "Engineering Center"
+}
+\end{verbatim}
+
+Nazwy właściwości użyte powyżej (\texttt{site}, \texttt{building}, \texttt{level} itd.) są elementem konkretnej reprezentacji --- profil lub schemat implementacyjny MOŻE stosować inne nazwy (zob. 3.1, 4.4.4), o ile odwzorowanie na komponenty modelu LEM pozostaje jednoznaczne.
+
+\noindent \textbf{Przykład informacyjny --- przypadek non-building} (zob. 2.1.6): obiekt znajdujący się na dachu budynku:
+\begin{verbatim}
+{
+  "site": "Main Campus",
+  "building": "Engineering Center",
+  "level": { "kind": "non-building", "value": null },
+  "referenceSpace": "Roof"
+}
+\end{verbatim}
+
+\section{Alias prezentacyjny DNS-safe}
+\label{sec:reprezentacja-dns-safe}
+Alias DNS-safe umożliwia prezentację wybranego zakresu informacji LEM w środowiskach posiadających ograniczenia charakterystyczne dla nazw DNS \cite{RFC1035}.
+
+Ograniczenia techniczne wynikające z zasad tworzenia nazw DNS nie definiują znaczenia informacji o lokalizacji.
+
+Znaczenie reprezentacji DNS-safe wynika wyłącznie z odwzorowania użytych elementów na komponenty modelu LEM.
+
+Alias DNS-safe może przedstawiać jedynie podzbiór komponentów modelu LEM. Brak możliwości wyrażenia określonego komponentu w danym środowisku nie zmienia znaczenia modelu, lecz oznacza utratę informacji w aliasie.
+
+Zdefiniowana niżej kanonikalizacja tekstu jest stratna, dlatego DNS-safe \textbf{NIE JEST} równoważną ani odwracalną reprezentacją LEM. Jest wyłącznie aliasem prezentacyjnym. System wymagający odtworzenia postaci kanonicznej MUSI przenosić pełną reprezentację LEM innym kanałem lub stosować oddzielne, bezstratne kodowanie z jednoznacznym schematem dekodowania.
+
+\noindent \textbf{Przykład informacyjny:}
+\begin{verbatim}
+level2.room201.eng-center.main-campus.loc.example.
+\end{verbatim}
+
+\subsection{Formalny schemat etykiet (informacyjny)}
+\label{sec:schemat-etykiet}
+Formalny schemat wprowadza jawne, krótkie prefiksy w każdej etykiecie, niezależne od jej pozycji w nazwie:
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{|l|l|p{7cm}|}
+\hline
+\textbf{Prefiks} & \textbf{Komponent} & \textbf{Kodowanie rdzenia etykiety} \\ \hline
+s- & Site & Kanonikalizowany ciąg znaków \\ \hline
+b- & Building & Kanonikalizowany ciąg znaków \\ \hline
+l- & Level & \texttt{l-<N>} dla kind="numeric", wartość nieujemna; \texttt{l-n<N>} dla wartości ujemnej; \texttt{l-nb} dla kind="non-building" \\ \hline
+r- & Reference Space & Kanonikalizowany ciąg znaków \\ \hline
+\end{tabular}
+\end{table}
+
+\noindent Relative Position nigdy nie jest reprezentowany w DNS-safe.\\
+Struktura pełnej nazwy (notacja ABNF, zgodnie z \cite{RFC5234}):
+\begin{verbatim}
+lem-dns-name  = *(component-label ".") suffix "."
+component-label = prefix "-" label-core
+prefix        = "s" / "b" / "l" / "r"
+label-core    = 1*61(ALPHA / DIGIT / "-")
+suffix        = 1*(dns-label ".") dns-label
+\end{verbatim}
+
+Kanonikalizacja wartości tekstowej (Site, Building, Reference Space) do rdzenia etykiety: zamiana na małe litery, zastąpienie spacji i innych znaków spoza \texttt{[a-z0-9]} znakiem \texttt{-}, zwinięcie kolejnych \texttt{-} do jednego, usunięcie \texttt{-} z brzegów. Ta kanonikalizacja jest stratna.
+
+\noindent \textbf{Uwaga:} Punycode \cite{RFC3492} koduje Unicode w etykietach DNS, ale samo jego użycie nie odtwarza informacji utraconych przez usuwanie separatorów, zakres komponentów ani pominięcie \textit{Relative Position}. Bezstratny wariant wymaga osobnej specyfikacji.
+
+\noindent \textbf{Przykład formalny:}
+\begin{verbatim}
+s-main-campus.b-engineering-center.l-2.r-room201.loc.example.
+\end{verbatim}
+
+\noindent \textbf{Przykład z Level ujemnym:}
+\begin{verbatim}
+s-main-campus.l-n1.r-parking-p1.loc.example.
+\end{verbatim}
+
+\noindent \textbf{Przykład z non-building (dach):}
+\begin{verbatim}
+s-main-campus.b-engineering-center.l-nb.r-roof.loc.example.
+\end{verbatim}
+
+\section{Mapowanie do istniejących modeli informacji}
+\label{sec:mapowanie-modeli}
+Istniejące modele informacji mogą być wykorzystywane do wyrażania wybranych aspektów informacji LEM poprzez zdefiniowane mapowania semantyczne.
+
+Mapowanie do zewnętrznego modelu informacji nie oznacza zastąpienia modelu LEM ani rozszerzenia jego znaczenia.
+
+Zewnętrzny model pełni rolę źródła reprezentacji określonych komponentów, których znaczenie musi być zgodne z interpretacją LEM.
+
+Komponenty zewnętrznego modelu, które nie posiadają odpowiednika w modelu LEM, pozostają informacją dodatkową i nie stanowią części opisu informacji LEM.
+
+\subsection{Mapowanie do modeli YANG}
+\label{sec:mapowanie-yang}
+Modele YANG mogą być wykorzystywane jako reprezentacja strukturalna komponentów LEM w środowiskach zarządzania sieciowego i systemowego.
+
+\noindent \textbf{Przykład informacyjny --- poglądowy moduł YANG \cite{RFC7950}:}
+\begin{verbatim}
+module example-lem-location {
+  namespace "urn:example:lem-location";
+  prefix "lem";
+  description
+    "Poglądowe odwzorowanie komponentów modelu semantycznego LEM (Rozdział 2)
+     na węzły danych YANG. Wyłącznie informacyjne (zob. 3.6.1).
+     Struktura Level odzwierciedla 2.1.6 (kind/value).";
+
+  grouping lem-location {
+    description "Grupa węzłów odpowiadająca komponentom modelu LEM (zob. 2.1).";
+
+    leaf site {
+      type string { length "1..256"; }
+      description "Odwzorowanie komponentu LEM: Site (zob. 2.1.6).";
+    }
+
+    leaf building {
+      type string { length "1..256"; }
+      description "Odwzorowanie komponentu LEM: Building (zob. 2.1.6).";
+    }
+
+    container level {
+      description
+        "Odwzorowanie komponentu LEM: Level (zob. 2.1.6). Struktura
+         kind/value zamiast prostej liczby całkowitej.";
+
+      leaf kind {
+        type enumeration {
+          enum numeric { description "Kondygnacja numerowana."; }
+          enum non-building { description "Dach, parking naziemny, przestrzeń zewnętrzna itp."; }
+        }
+        mandatory true;
+      }
+
+      leaf value {
+        type int32;
+        when "../kind = 'numeric'";
+        description "Wymagane i całkowite dla kind=numeric; nieobecne dla kind=non-building.";
+      }
+
+      must "(kind = 'numeric' and value) or (kind = 'non-building' and not(value))" {
+        error-message "Zgodnie z 2.1.6: value wymagane dla kind=numeric, niedozwolone dla kind=non-building.";
+      }
+    }
+
+    leaf reference-space {
+      type string { length "1..256"; }
+      description "Odwzorowanie komponentu LEM: Reference Space (zob. 2.1.6).";
+    }
+
+    leaf relative-position {
+      type string { length "1..256"; }
+      description "Odwzorowanie komponentu LEM: Relative Position (zob. 2.1.6) — opis relacyjny.";
+      must "../reference-space" {
+        error-message "Relative Position obecny bez Reference Space narusza LEM 2.5.3.";
+      }
+    }
+  }
+
+  container device-location {
+    description "Przykładowy węzeł konfiguracyjny wykorzystujący grupę lem-location.";
+    uses lem-location;
+  }
+}
+\end{verbatim}
+
+\subsection{Mapowanie do modeli Civic Address}
+\label{sec:mapowanie-civic}
+Modele Civic Address mogą być wykorzystywane do reprezentacji wybranych komponentów opisujących adresowe aspekty informacji o lokalizacji.
+
+\noindent \textbf{Przykład informacyjny --- dokument PIDF-LO civicAddress \cite{RFC5139}:}
+\begin{verbatim}
+<civicAddress xml:lang="en-US"
+ xmlns="urn:ietf:params:xml:ns:pidf:geopriv10:civicAddr">
+  <country>US</country>
+  <NAM>Main Campus</NAM>
+  <BLD>Engineering Center</BLD>
+  <FLR>2</FLR>
+  <ROOM>Room201</ROOM>
+  <LOC>East side</LOC>
+</civicAddress>
+\end{verbatim}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{2.2cm}|>{\raggedright\arraybackslash}p{3.3cm}|>{\raggedright\arraybackslash}X|}
+\hline
+\textbf{CAtype} & \textbf{Komponent LEM} & \textbf{Charakter mapowania} \\ \hline
+BLD (27) & Building & Odwzorowanie bezpośrednie. \\ \hline
+FLR (28) & Level, kind="numeric" & Odwzorowanie dotyczy wyłącznie przypadku kind="numeric". \\ \hline
+(brak wprost) & Level, kind="non-building" & Civic Address nie posiada elementu dedykowanego. \\ \hline
+ROOM (23) & Reference Space & Odwzorowanie bezpośrednie. \\ \hline
+NAM (22) & Site (interpretacja) & Interpretacyjne. \\ \hline
+LOC (1) & Relative Position & Semantycznie bliskie, lecz nie identyczne. \\ \hline
+\end{tabularx}
+\caption{Mapowanie wybranych typów Civic Address \cite{RFC4776} na komponenty LEM}
+\end{table}
+
+\subsection{Mapowanie do modeli geospatial}
+\label{sec:mapowanie-geospatial}
+Modele geospatial mogą być wykorzystywane do wyrażania przestrzennych aspektów informacji o lokalizacji, w szczególności współrzędnych lub odniesień przestrzennych.
+
+\noindent \textbf{Przykład informacyjny --- obiekt GeoJSON \cite{RFC7946}:}
+\begin{verbatim}
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [-73.961452, 40.808058]
+  },
+  "properties": {
+    "lem:site": "Main Campus",
+    "lem:building": "Engineering Center",
+    "lem:level": { "kind": "numeric", "value": 2 },
+    "lem:referenceSpace": "Room201",
+    "lem:relativePosition": "East side"
+  }
+}
+\end{verbatim}
+
+\noindent Prefiks \texttt{lem:} w nazwach właściwości jest konwencją informacyjną. Kolejność współrzędnych \texttt{[longitude, latitude]} jest wymagana przez \cite{RFC7946} §4.
+
+\section{Przykład ilustracyjny (jedna lokalizacja we wszystkich reprezentacjach)}
+\label{sec:przyklad-ilustracyjny}
+Poniższy przykład przedstawia tę samą informację o lokalizacji wyrażoną kolejno we wszystkich reprezentacjach. Wszystkie poniższe zapisy MUSZĄ prowadzić do tej samej interpretacji kanonicznej (zob. 2.4.5).
+
+\noindent \textbf{Opisywana lokalizacja:} obiekt znajdujący się w budynku "Engineering Center" na kampusie "Main Campus", na drugiej kondygnacji, w pomieszczeniu "Room201", po wschodniej stronie tego pomieszczenia.
+
+\begin{enumerate}
+    \item \textbf{Reprezentacja tekstowa (3.2):}
+\begin{verbatim}
+Site: Main Campus
+Building: Engineering Center
+Level: 2 (numeric)
+Reference Space: Room201
+Relative Position: East side
+\end{verbatim}
+
+    \item \textbf{Reprezentacja binarna / TLV (3.3, wg formalnego rejestru 3.3.1 — pole L na 2 oktetach):}
+\begin{verbatim}
+01 00 0B 4D 61 69 6E 20 43 61 6D 70 75 73
+02 00 12 45 6E 67 69 6E 65 65 72 69 6E 67 20 43 65 6E 74 65 72
+03 00 05 01 00 00 00 02
+04 00 07 52 6F 6F 6D 32 30 31
+05 00 09 45 61 73 74 20 73 69 64 65
+\end{verbatim}
+
+    \item \textbf{Reprezentacja JSON (3.4):}
+\begin{verbatim}
+{
+  "site": "Main Campus",
+  "building": "Engineering Center",
+  "level": { "kind": "numeric", "value": 2 },
+  "referenceSpace": "Room201",
+  "relativePosition": "East side"
+}
+\end{verbatim}
+
+    \item \textbf{Alias prezentacyjny DNS-safe (3.5.1) --- zapis stratny:}
+\begin{verbatim}
+s-main-campus.b-engineering-center.l-2.r-room201.loc.example.
+\end{verbatim}
+\end{enumerate}
+
+\section{Przykłady niepoprawnych opisów lokalizacji}
+\label{sec:przyklady-niepoprawne}
+\begin{itemize}
+    \item \textbf{Przykład 1 --- naruszenie spójności relacji przestrzennych (2.5.3):}
+\begin{verbatim}
+{
+  "site": "Main Campus",
+  "building": "Engineering Center",
+  "level": { "kind": "numeric", "value": 2 },
+  "relativePosition": "East side"
+}
+\end{verbatim}
+Obecny jest komponent \textit{Relative Position}, lecz brakuje \textit{Reference Space}.
+
+    \item \textbf{Przykład 2 --- pusty opis lokalizacji (2.4.4):}
+\begin{verbatim}
+{}
+\end{verbatim}
+
+    \item \textbf{Przykład 3 --- naruszenie struktury Level (2.1.6):}
+\begin{verbatim}
+{
+  "site": "Main Campus",
+  "level": { "kind": "non-building", "value": 3 }
+}
+\end{verbatim}
+\end{itemize}

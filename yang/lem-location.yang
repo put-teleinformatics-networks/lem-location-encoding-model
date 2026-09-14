@@ -1,0 +1,78 @@
+// Copyright 2026 Piotr Augustyniak
+// SPDX-License-Identifier: Apache-2.0
+
+module lem-location {
+  yang-version 1.1;
+  namespace "https://w3id.org/lem/yang/lem-location";
+  prefix lem;
+
+  organization "LEM research report";
+  contact "Piotr Augustyniak";
+  description
+    "Informative YANG mapping of the Location Encoding Model 1.0 core.";
+
+  revision 2026-09-13 {
+    description "Preprint release candidate 1.";
+  }
+
+  grouping lem-location {
+    description "Five components of the LEM semantic core.";
+
+    leaf site {
+      type string { length "1..256"; }
+      description "LEM Site.";
+    }
+
+    leaf building {
+      type string { length "1..256"; }
+      description "LEM Building.";
+    }
+
+    container level {
+      presence "The LEM Level component is present.";
+      description "LEM Level.";
+
+      leaf kind {
+        type enumeration {
+          enum numeric;
+          enum non-building;
+        }
+        mandatory true;
+      }
+
+      leaf value {
+        when "../kind = 'numeric'";
+        type int32;
+        mandatory true;
+      }
+
+      must "(kind = 'numeric' and value) or
+            (kind = 'non-building' and not(value))" {
+        error-message
+          "value is required for numeric and forbidden for non-building.";
+      }
+    }
+
+    leaf reference-space {
+      type string { length "1..256"; }
+      description "LEM Reference Space.";
+    }
+
+    leaf relative-position {
+      type string { length "1..256"; }
+      must "../reference-space" {
+        error-message
+          "Relative Position requires Reference Space.";
+      }
+      description "LEM Relative Position.";
+    }
+  }
+
+  container device-location {
+    description "Example container using the LEM mapping.";
+    uses lem-location;
+    must "site or building or level or reference-space or relative-position" {
+      error-message "A LEM description must contain a core component.";
+    }
+  }
+}

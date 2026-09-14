@@ -1,0 +1,12 @@
+LEM — Location Encoding Model reference artefacts
+Copyright 2026 Piotr Augustyniak
+
+Project infrastructure owner and maintainer:
+Poznan University of Technology, Faculty of Computing and Telecommunications,
+research group led by Piotr Zwierzykowski.
+
+Apache License 2.0 applies to the JSON Schemas in schemas/, the YANG module
+in yang/, and the validation code and test vectors in tests/.
+
+The report and its LaTeX sources are licensed separately under CC BY 4.0.
+Logos, trademarks, ppfcmthesis.cls, and third-party materials are excluded.

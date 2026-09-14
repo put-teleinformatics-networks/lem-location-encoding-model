@@ -1,0 +1,323 @@
+% =====================================================================
+%  RAPORT NAUKOWO-BADAWCZY  --  Politechnika Poznanska
+%  Wydzial Informatyki i Telekomunikacji
+% ---------------------------------------------------------------------
+%  Dokument: LEM - Location Encoding Model
+%  Autor:    mgr Piotr Augustyniak
+%
+%  Raport naukowo-badawczy - material roboczy stanowiacy podstawe do
+%  przygotowania fragmentow rozprawy i/lub artykulow naukowych.
+%
+%  Bazowy szablon:  PUT Dissertation Template (ppfcmthesis.cls,
+%                   Weiss/Wesolek) - dostosowany do raportu.
+%  Kompilator:  pdfLaTeX   |   Bibliografia: BibTeX
+%
+%  UWAGA: klasa ppfcmthesis.cls NIE jest modyfikowana - cala
+%  personalizacja odbywa sie w tej preambule.
+% =====================================================================
+
+% --- Klasa ------------------------------------------------------------
+\documentclass[polish,a4paper,oneside]{ppfcmthesis}
+
+% --- Kodowanie i czcionki (pdfLaTeX) ---------------------------------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+
+% --- Pakiety uzywane w biezacej tresci ------------------------------
+\usepackage{enumitem}    % listy (itemize / description)
+\usepackage{float}       % pozycjonowanie rysunkow [H]
+\usepackage{microtype}   % drobne poprawki typografii
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{fvextra}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,fit}
+\RecustomVerbatimEnvironment{verbatim}{Verbatim}{breaklines=true,breakanywhere=true,fontsize=\small}
+\setlength{\emergencystretch}{2em}
+% (graphicx do \includegraphics jest juz ladowany przez klase)
+
+% =====================================================================
+% OPCJONALNY ZESTAW - odkomentuj wg potrzeb, gdy tresc tego wymaga.
+% Celowo wylaczony, aby preambula zawierala tylko to, co aktualnie uzywane.
+% =====================================================================
+% --- Matematyka -----------------------------------------------------
+% \usepackage{amsmath,amssymb}
+%
+% --- Tabele (rozszerzone) -------------------------------------------
+% \usepackage{array}
+% \usepackage{tabularx}
+% \usepackage{multirow}
+% \usepackage{longtable}
+% \usepackage{colortbl}
+% \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+%
+% --- Diagramy i wykresy ---------------------------------------------
+% \usepackage{tikz}
+% \usetikzlibrary{positioning,arrows.meta,fit,backgrounds,calc,shapes.geometric}
+% \usepackage{pgfplots}
+% \pgfplotsset{compat=1.18}
+%
+% --- Rysunki skladane (subfigure) -----------------------------------
+% \usepackage{subcaption}
+%
+% --- Listingi kodu --------------------------------------------------
+% \usepackage{listings}
+% \usepackage{xcolor}
+% \definecolor{kw}{RGB}{0,0,180}
+% \definecolor{cm}{RGB}{60,140,60}
+% \definecolor{str}{RGB}{160,40,40}
+% \lstset{
+%   basicstyle=\ttfamily\small,
+%   keywordstyle=\color{kw}\bfseries, commentstyle=\color{cm}\itshape,
+%   stringstyle=\color{str}, numbers=left, numberstyle=\tiny\color{gray},
+%   frame=single, breaklines=true, tabsize=2, showstringspaces=false,
+%   captionpos=b, inputencoding=utf8, extendedchars=true,
+%   literate={ą}{{\k a}}1 {ć}{{\'c}}1 {ę}{{\k e}}1 {ł}{{\l}}1 {ń}{{\'n}}1
+%            {ó}{{\'o}}1 {ś}{{\'s}}1 {ź}{{\'z}}1 {ż}{{\.z}}1
+%            {Ą}{{\k A}}1 {Ć}{{\'C}}1 {Ę}{{\k E}}1 {Ł}{{\L}}1 {Ń}{{\'N}}1
+%            {Ó}{{\'O}}1 {Ś}{{\'S}}1 {Ź}{{\'Z}}1 {Ż}{{\.Z}}1}
+%
+% --- Symbole i znaczniki zmian (z dokumentu zrodlowego) --------------
+% \usepackage{pifont}
+% \newcommand{\cmark}{\ding{51}}
+% \newcommand{\xmark}{\ding{55}}
+% \newcommand{\UWAGA}[1]{\textcolor{orange}{\small[\textbf{UWAGA:} #1]}}
+% \newcommand{\dopis}[1]{\textcolor{red}{#1}}    % tresc nowa
+% \newcommand{\zmiana}[1]{\textcolor{blue}{#1}}  % przeredagowania
+% =====================================================================
+
+% =====================================================================
+% NUMERACJA WG KONWENCJI POLSKIEJ - kropka po ostatnim numerze
+% =====================================================================
+% Efekt: "1.1. Wprowadzenie", "Rysunek 1.1. Tytul", "Tabela 1.1. Tytul".
+% Numer rozdzialu (pierwszy poziom) - bez kropki.
+%
+% UWAGA TYPOGRAFICZNA: w tej konwencji \ref zwraca numer Z KROPKA
+% (np. "2.1."). Nie konczyc zdan na \ref (powstanie podwojna kropka).
+% ---------------------------------------------------------------------
+\renewcommand{\thesection}{\thechapter.\arabic{section}.}
+\renewcommand{\thesubsection}{\thechapter.\arabic{section}.\arabic{subsection}.}
+\renewcommand{\thesubsubsection}{\thechapter.\arabic{section}.\arabic{subsection}.\arabic{subsubsection}.}
+
+% Patch running header - po zmianie \thesection unikamy podwojnej kropki
+% w zywej paginie (nadpisany tylko \sectionmark).
+\makeatletter
+\renewcommand{\@ppfcmthesismarks}{%
+  \let\@mkboth\markboth
+  \def\chaptermark##1{\markboth{##1}{##1}}%
+  \def\sectionmark##1{\markright{%
+    \ifnum \c@secnumdepth>\z@
+      \thesection\ %
+    \fi
+    ##1}}%
+  \def\tocmark{\markboth{\contentsname}{}}%
+  \def\lofmark{\markboth{\listfigurename}{}}%
+  \def\lotmark{\markboth{\listtablename}{}}%
+  \def\bibmark{\markboth{\bibname}{}}%
+  \def\indexmark{\markboth{\indexname}{}}%
+}
+\makepsmarks{ppfcmthesis}{\@ppfcmthesismarks}
+\makeatother
+
+\renewcommand{\thefigure}{\thechapter.\arabic{figure}.}
+\renewcommand{\thetable}{\thechapter.\arabic{table}.}
+
+% Podpisy rysunkow/tabel - pakiet caption + przekierowanie makr klasy
+% (\fcmfcaption pod rysunkiem, \fcmtcaption nad tabela) na zwykly \caption.
+\usepackage{caption}
+\captionsetup{labelformat=simple,labelsep=space,
+              font={small},labelfont={small,bf}}
+\makeatletter
+\renewcommand{\fcmfcaption}[2][\@empty]{%
+  \ifx\@empty#1\@empty \caption{#2}\else \caption[#1]{#2}\fi}
+\renewcommand{\fcmtcaption}[2][\@empty]{%
+  \ifx\@empty#1\@empty \caption{#2}\else \caption[#1]{#2}\fi}
+\makeatother
+
+% =====================================================================
+% METADANE RAPORTU  --  EDYTUJ PONIZEJ
+% =====================================================================
+% Rodzaj dokumentu (naglowek nad tytulem):
+\newcommand{\raporttyp}{Raport naukowo-badawczy}
+
+% -----------------------------------------------------------------
+% NUMER RAPORTU - schemat:  RP / <numer kolejny> / <rok> <JEZYK>
+%   RP      - typ dokumentu (RaPort)
+%   numer   - kolejny numer w danym roku (np. 01, 02, ...)
+%   rok     - rok wydania
+%   jezyk   - PL lub EN
+% Przyklad: RP/01/2026 PL
+% -----------------------------------------------------------------
+\newcommand{\nrraportu}{RP/01/2026 PL}
+
+% Podtytul / nazwa tematu badawczego (opcjonalny - zostaw pusty, jesli brak):
+\newcommand{\podtytul}{}
+
+% Tytul:
+\newcommand{\tytulraportu}{LEM~--- Location Encoding Model}
+
+% Autor (z tytulem naukowym/zawodowym):
+\newcommand{\autor}{mgr Piotr Augustyniak}
+
+% Grupa badawcza / afiliacja zespolu:
+\newcommand{\grupabadawcza}{Grupa badawcza pod kierunkiem dr.~hab.~in\.z. Piotra Zwierzykowskiego, prof.~PP}
+
+% Opiekun naukowy / kierownik projektu (opcjonalny - zostaw pusty, jesli brak):
+\newcommand{\opiekun}{}
+
+% Rok:
+\newcommand{\rok}{2026}
+\newcommand{\wersja}{1.0}
+\newcommand{\statusraportu}{Preprint --- specyfikacja techniczna}
+\newcommand{\datawydania}{13 wrze\'snia 2026}
+
+\hypersetup{
+  pdftitle={LEM - Location Encoding Model},
+  pdfauthor={Piotr Augustyniak},
+  pdfsubject={Raport naukowo-badawczy, nr RP/01/2026 PL},
+  pdfkeywords={LEM, Location Encoding Model, lokalizacja, model semantyczny}
+}
+
+\begin{document}
+\hypersetup{pageanchor=false}
+
+% =====================================================================
+% STRONA TYTULOWA
+% =====================================================================
+\frontmatter\pagestyle{empty}
+\begin{titlingpage}
+% Numer raportu - prawy gorny rog
+\hfill{\small Nr\ \nrraportu}\par
+\begin{center}
+  \includegraphics[width=0.9\textwidth]{figures/sygnet-pp.pdf}\\[1.2em]
+  {\large Politechnika Pozna\'nska}\\[0.2em]
+  Wydzia\l{} Informatyki i~Telekomunikacji\\
+  Instytut Sieci Teleinformatycznych
+
+  \vspace{2.0cm}
+
+  {\Large\scshape \raporttyp}%
+  \ifx\podtytul\empty\else\\[0.4em]{\large \podtytul}\fi
+
+  \vspace{1.4cm}
+
+  \rule{\textwidth}{0.4pt}\\[0.8em]
+  {\LARGE\bfseries \tytulraportu}\\[0.8em]
+  \rule{\textwidth}{0.4pt}
+
+  \vspace{2.0cm}
+
+  \begin{minipage}{0.85\textwidth}
+    \large
+    \begin{tabular}{@{}r@{\hspace{1.5em}}l@{}}
+      \textbf{Autor:}          & \autor \\[0.6em]
+      % Aby dodac opiekuna naukowego, odkomentuj ponizszy wiersz:
+      % \textbf{Opiekun naukowy:} & \opiekun \\[0.6em]
+      \textbf{Nr raportu:} & \nrraportu \\
+      \textbf{Wersja:} & \wersja \\
+      \textbf{Status:} & \statusraportu \\
+      \textbf{Data:} & \datawydania \\
+    \end{tabular}
+  \end{minipage}
+
+  \vspace{1.0cm}
+
+  {\large \grupabadawcza}
+
+  \vfill
+
+  \begin{minipage}{0.9\textwidth}
+    \centering\footnotesize
+    \textcopyright{} 2026 Piotr Augustyniak. Treść raportu oraz autorskie
+    tabele i diagramy: CC BY 4.0. Artefakty techniczne: Apache License 2.0.
+    Logotypy PP, klasa szablonu i materiały osób trzecich są wyłączone.
+  \end{minipage}
+
+  \vspace{0.8em}
+
+  Pozna\'n, \rok
+\end{center}
+\end{titlingpage}
+\cleardoublepage
+\hypersetup{pageanchor=true}
+\pagenumbering{Roman}
+
+% % =====================================================================
+% % STRESZCZENIE  (tresc 1:1 z abstraktu dokumentu zrodlowego)
+% % =====================================================================
+% \thispagestyle{empty}
+% \section*{Streszczenie}
+% \addcontentsline{toc}{chapter}{Streszczenie}
+% Niniejszy dokument definiuje Model Kodowania Lokalizacji (\textit{Location Encoding Model} – LEM) — hierarchiczny, rozszerzalny model semantyczny do reprezentacji fizycznej lokalizacji urządzeń infrastruktury sieciowej w przestrzeniach wewnętrznych i pół-otwartych. LEM wprowadza ujednolicony sposób opisu lokalizacji, niezależny od producenta sprzętu, stosowanego protokołu oraz przyjętej konwencji nazewniczej. Model umożliwia reprezentację lokalizacji na różnych poziomach szczegółowości i w wielu formatach — od czytelnego dla człowieka ciągu znaków, przez strukturyzowane dane, po zwarte kodowanie binarne. Celem LEM jest ułatwienie zarządzania infrastrukturą, automatyzacji procesów operacyjnych, integracji systemów oraz zapewnienie deterministycznego i jednoznacznego opisu lokalizacji urządzeń w środowiskach \textit{enterprise}, kampusowych, przemysłowych i OT. Dokument określa model danych, zasady kodowania i interpretacji, mechanizmy rozszerzania oraz przykładowe mapowania do istniejących protokołów i technologii sieciowych.
+% \vfill\cleardoublepage
+
+% =====================================================================
+% STRESZCZENIE  (tresc 1:1 z abstraktu dokumentu zrodlowego)
+% =====================================================================
+\thispagestyle{empty}
+\section*{Streszczenie}
+\addcontentsline{toc}{chapter}{Streszczenie}
+Niniejszy dokument definiuje Model Kodowania Lokalizacji (\textit{Location Encoding Model}, LEM) --- niewielki, niezależny od reprezentacji model informacji o lokalizacji. LEM określa pięć komponentów opisu lokalizacji encji, ich dziedziny wartości, reguły spójności oraz deterministyczną postać kanoniczną. Reprezentacje tekstowe, JSON, binarne TLV i YANG odwzorowują ten sam rdzeń semantyczny; mapowania do Civic Address i GeoJSON ilustrują integrację z istniejącymi modelami. Stratny zapis DNS-safe jest jawnie klasyfikowany jako alias prezentacyjny, a nie równoważna reprezentacja LEM. Profile zastosowań mogą nakładać dodatkowe wymagania bez zmiany podstawowej semantyki modelu. Dokument obejmuje także zasady implementacji, bezpieczeństwa, prywatności, wersjonowania oraz zestaw walidowalnych artefaktów referencyjnych.
+\vfill\cleardoublepage
+
+\thispagestyle{empty}
+\section*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+This document specifies the Location Encoding Model (LEM), a compact, representation-independent information model for describing the physical location of an entity. LEM defines five components, their value domains, consistency constraints, and a deterministic canonical form. Text, JSON, binary TLV, and YANG representations map to the same semantic core; mappings to Civic Address and GeoJSON illustrate integration with established models. A lossy DNS-safe form is explicitly classified as a presentation alias rather than a semantically equivalent LEM representation. Application profiles may impose additional requirements without changing the core semantics. The specification also covers implementation, security, privacy, versioning, and machine-verifiable reference artefacts.
+\vfill\cleardoublepage
+
+
+
+% --- Spis tresci (automatyczny) -------------------------------------
+\pagestyle{ppfcmthesis}
+\tableofcontents*
+\cleardoublepage
+
+% % =====================================================================
+% % TRESC
+% % =====================================================================
+% \mainmatter
+% \renewcommand{\thefigure}{\thechapter.\arabic{figure}.}
+% \renewcommand{\thetable}{\thechapter.\arabic{table}.}
+
+% \input{chapters/01-wprowadzenie.tex}
+% \input{chapters/02-model-semantyczny.tex}
+% \input{chapters/03-reprezentacje-i-mapowania-modelu.tex}
+% \input{chapters/04-profile-i-zastosowania-modelu-LEM}
+
+% % --- Bibliografia ---------------------------------------------------
+% % Dokument zrodlowy nie zawiera cytowan - sekcja przygotowana do
+% % wlaczenia po dodaniu pozycji do bibliography.bib i wstawieniu \cite{}.
+% % \bibliographystyle{plalpha}
+% % {\raggedright\sloppy\small\bibliography{bibliography}}
+
+% \end{document}
+
+% =====================================================================
+% TREŚĆ
+% =====================================================================
+\mainmatter
+\renewcommand{\thefigure}{\thechapter.\arabic{figure}.}
+\renewcommand{\thetable}{\thechapter.\arabic{table}.}
+
+\input{chapters/01-wprowadzenie.tex}
+\input{chapters/02-model-semantyczny.tex}
+\input{chapters/03-reprezentacje-i-mapowania-modelu.tex}
+\input{chapters/04-profile-i-zastosowania-modelu-LEM.tex}
+\input{chapters/05-zagadnienia-implementacyjne.tex}
+\input{chapters/06-bezpieczenstwo-i-prywatnosc.tex}
+\input{chapters/07-ewolucja-modelu.tex}
+\input{chapters/08-prace-powiazane.tex}
+
+% =====================================================================
+% ZAŁĄTNIKI
+% =====================================================================
+\appendix
+\input{chapters/A-glosariusz.tex}
+
+% --- Bibliografia ---------------------------------------------------
+\bibliographystyle{plain}
+{\raggedright\sloppy\small\bibliography{bibliography}}
+
+\end{document}

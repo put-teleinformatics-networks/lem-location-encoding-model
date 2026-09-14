@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://w3id.org/lem/1.0/profile/emergency",
+  "$comment": "Copyright 2026 Piotr Augustyniak. SPDX-License-Identifier: Apache-2.0",
+  "title": "LEM 1.0 emergency location profile",
+  "allOf": [
+    { "$ref": "https://w3id.org/lem/1.0/schema/core" },
+    {
+      "type": "object",
+      "required": ["building", "level", "referenceSpace"]
+    }
+  ]
+}

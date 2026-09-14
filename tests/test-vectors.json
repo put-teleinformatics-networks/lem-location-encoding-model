@@ -1,0 +1,22 @@
+[
+  {"name":"core-site","schema":"core","valid":true,"data":{"site":"Main Campus"}},
+  {"name":"core-full","schema":"core","valid":true,"data":{"site":"Main Campus","building":"Engineering Center","level":{"kind":"numeric","value":2},"referenceSpace":"Room201","relativePosition":"East side"}},
+  {"name":"core-int32-min","schema":"core","valid":true,"data":{"level":{"kind":"numeric","value":-2147483648}}},
+  {"name":"core-int32-max","schema":"core","valid":true,"data":{"level":{"kind":"numeric","value":2147483647}}},
+  {"name":"core-non-building","schema":"core","valid":true,"data":{"level":{"kind":"non-building","value":null},"referenceSpace":"Roof"}},
+  {"name":"core-unicode","schema":"core","valid":true,"data":{"site":"Główny kampus — Poznań"}},
+  {"name":"core-empty","schema":"core","valid":false,"data":{}},
+  {"name":"core-empty-string","schema":"core","valid":false,"data":{"site":""}},
+  {"name":"core-string-257","schema":"core","valid":false,"data":{"site":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}},
+  {"name":"core-relative-without-reference","schema":"core","valid":false,"data":{"relativePosition":"East side"}},
+  {"name":"core-numeric-null","schema":"core","valid":false,"data":{"level":{"kind":"numeric","value":null}}},
+  {"name":"core-non-building-number","schema":"core","valid":false,"data":{"level":{"kind":"non-building","value":3}}},
+  {"name":"core-fractional-level","schema":"core","valid":false,"data":{"level":{"kind":"numeric","value":1.5}}},
+  {"name":"core-int32-overflow","schema":"core","valid":false,"data":{"level":{"kind":"numeric","value":2147483648}}},
+  {"name":"core-level-extra-field","schema":"core","valid":false,"data":{"level":{"kind":"numeric","value":2,"unit":"floor"}}},
+  {"name":"emergency-complete","schema":"emergency","valid":true,"data":{"building":"Engineering Center","level":{"kind":"numeric","value":2},"referenceSpace":"Room201"}},
+  {"name":"emergency-missing-level","schema":"emergency","valid":false,"data":{"building":"Engineering Center","referenceSpace":"Room201"}},
+  {"name":"emergency-missing-reference","schema":"emergency","valid":false,"data":{"building":"Engineering Center","level":{"kind":"numeric","value":2}}},
+  {"name":"network-minimal","schema":"network","valid":true,"data":{"building":"Engineering Center","referenceSpace":"Room201"}},
+  {"name":"network-forbidden-relative","schema":"network","valid":false,"data":{"building":"Engineering Center","referenceSpace":"Room201","relativePosition":"East side"}}
+]

@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "If you use LEM, please cite the technical specification. Text: CC BY 4.0; reference artefacts: Apache-2.0."
+title: "LEM — Location Encoding Model reference artefacts"
+type: software
+license: Apache-2.0
+authors:
+  - family-names: Augustyniak
+    given-names: Piotr
+    affiliation: Poznan University of Technology
+version: "1.0-rc2"
+date-released: 2026-09-13
+keywords:
+  - location information
+  - semantic model
+  - network infrastructure
+  - interoperability
+abstract: >-
+  A compact, representation-independent information model for describing
+  physical location using five components, deterministic canonical form,
+  application profiles, and mappings to JSON, TLV, YANG, Civic Address,
+  and GeoJSON.
+preferred-citation:
+  type: generic
+  title: "LEM — Location Encoding Model"
+  authors:
+    - family-names: Augustyniak
+      given-names: Piotr
+      affiliation: Poznan University of Technology
+  year: 2026

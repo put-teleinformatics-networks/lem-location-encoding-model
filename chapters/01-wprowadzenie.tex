@@ -1,0 +1,77 @@
+% =====================================================================
+% Rozdzial 1: Wprowadzenie
+% =====================================================================
+
+\chapter{Wprowadzenie}
+\label{chap:wprowadzenie}
+
+\section{Cel modelu LEM}
+\label{sec:cel-lem}
+Informacja o lokalizacji jest wykorzystywana przez wiele systemów technicznych działających w różnych domenach zastosowań. Systemy zarządzania infrastrukturą, automatyzacji, bezpieczeństwa, dokumentacji technicznej oraz usług lokalizacyjnych wymagają jednoznacznego opisu położenia obiektów fizycznych. W praktyce informacje te są często reprezentowane przy użyciu lokalnych konwencji zależnych od systemu, producenta lub technologii. Stosowane podejścia obejmują między innymi:
+
+\begin{itemize}
+    \item nieustrukturyzowane opisy tekstowe w systemach CMDB, bazach danych lub dokumentacji technicznej,
+    \item lokalne schematy nazewnictwa urządzeń i przestrzeni,
+    \item oznaczenia wynikające z dokumentacji architektonicznej lub organizacyjnej,
+    \item informacje utrzymywane jako wiedza operacyjna określonych osób lub zespołów.
+\end{itemize}
+
+Takie sposoby opisu często nie zapewniają jednoznacznej, deterministycznej i maszynowo interpretowalnej informacji. Konsekwencją braku wspólnego modelu semantycznego są m.in. ograniczona interoperacyjność, utrudniona automatyzacja oraz problemy z utrzymaniem spójności.
+
+Model Kodowania Lokalizacji (\textit{Location Encoding Model}, LEM) definiuje wspólny model semantyczny, którego celem jest zapewnienie jednoznacznego znaczenia komponentów niezależnie od sposobu ich reprezentacji czy implementacji. LEM definiuje znaczenie informacji, podczas gdy sposób jej wyrażenia w konkretnym formacie pozostaje warstwą niezależną.
+
+\section{Zakres dokumentu}
+\label{sec:zakres}
+Niniejszy dokument definiuje \textit{Location Encoding Model} (LEM) jako model informacji przeznaczony do opisu lokalizacji. Specyfikacja określa:
+
+\begin{itemize}
+    \item model semantyczny informacji o lokalizacji,
+    \item komponenty modelu LEM oraz ich znaczenie,
+    \item zasady interpretacji informacji, równoważności semantycznej oraz spójności modelu,
+    \item zasady reprezentacji informacji LEM oraz tworzenia profili zastosowań.
+\end{itemize}
+
+Dokument nie definiuje formatów wymiany danych, protokołów komunikacyjnych, technologii pomiaru lokalizacji, algorytmów pozycjonowania ani wymagań specyficznych dla pojedynczego środowiska.
+
+LEM nie definiuje mechanizmów identyfikacji obiektów, pozyskiwania informacji lokalizacyjnej ani metod określania położenia. Model opisuje wyłącznie semantykę informacji o lokalizacji już dostępnej.
+
+\section{Wkład dokumentu}
+\label{sec:wklad}
+Wkład LEM obejmuje cztery elementy:
+\begin{enumerate}
+    \item niewielki rdzeń semantyczny oddzielający znaczenie lokalizacji od jej reprezentacji;
+    \item deterministyczną postać kanoniczną i jawne reguły równoważności opisów częściowych;
+    \item spójne odwzorowania na JSON, TLV i YANG oraz mapowania integracyjne do Civic Address i GeoJSON;
+    \item mechanizm profili umożliwiający specjalizację domenową bez redefiniowania rdzenia modelu.
+\end{enumerate}
+
+\section{Niezależność semantyki od reprezentacji}
+\label{sec:niezaleznosc}
+Model LEM rozdziela znaczenie informacji od sposobu jej wyrażenia. Znaczenie jest określone przez model semantyczny i interpretację kanoniczną. Ta sama informacja może być wyrażona w różnych reprezentacjach (tekstowej, strukturalnej, binarnej), które są semantycznie równoważne, jeśli prowadzą do tej samej interpretacji zgodnie z zasadami LEM.
+
+\section{Struktura dokumentu}
+\label{sec:struktura-dok}
+\begin{description}
+    \item[Rozdział 2:] Definiuje model semantyczny LEM, komponenty oraz zasady interpretacji.
+    \item[Rozdział 3:] Definiuje zasady reprezentacji modelu w różnych formatach danych.
+    \item[Rozdział 4:] Definiuje profile zastosowań dla specjalizacji domenowych.
+    \item[Rozdziały 5--7:] Omawiają implementację, bezpieczeństwo, prywatność i ewolucję modelu.
+    \item[Rozdział 8:] Osadza LEM względem istniejących standardów i modeli.
+\end{description}
+
+\section{Terminologia i konwencje}
+\label{sec:terminologia}
+Na potrzeby dokumentu przyjęto następujące definicje:
+
+\begin{description}
+    \item[Model informacji (\textit{Information Model}):] Abstrakcyjny model definiujący strukturę, znaczenie oraz relacje elementów.
+    \item[Informacja o lokalizacji:] (\textit{Location Information}) Informacja opisana przy użyciu komponentów LEM.
+    \item[Komponent modelu (\textit{Model Component}):] Element LEM posiadający znaczenie semantyczne.
+    \item[Przestrzeń referencyjna (\textit{Reference Space}):] Przestrzeń odniesienia dla interpretacji przestrzennej.
+    \item[Położenie względne (\textit{Relative Position}):] Relacja przestrzenna względem przestrzeni referencyjnej.
+    \item[Reprezentacja (\textit{Representation}):] Sposób wyrażenia informacji przy użyciu formatu danych.
+    \item[Interpretacja kanoniczna (\textit{Canonical Interpretation}):] Jednoznaczne znaczenie wynikające z modelu LEM.
+    \item[Profil LEM (\textit{LEM Profile}):] Specjalizacja modelu określająca wymagania dla danego zastosowania.
+\end{description}
+
+Słowa kluczowe zapisane wielkimi literami są używane zgodnie z BCP~14 \cite{RFC2119,RFC8174}: \textbf{MUSI} odpowiada \textit{MUST}, \textbf{NIE MOŻE} --- \textit{MUST NOT}, \textbf{POWINIEN} --- \textit{SHOULD}, a \textbf{MOŻE} --- \textit{MAY}. Przykłady mają charakter ilustracyjny, o ile nie oznaczono ich inaczej.

@@ -1,0 +1,44 @@
+% =====================================================================
+% Rozdział 8: Prace powiązane i pozycjonowanie modelu
+% =====================================================================
+
+\chapter{Prace powiązane i pozycjonowanie modelu}
+\label{chap:related-work}
+
+LEM dotyczy obszaru, w którym funkcjonują dojrzałe standardy lokalizacyjne i modele budynkowe. Celem niniejszego rozdziału nie jest zastąpienie tych rozwiązań, lecz wyznaczenie granicy zakresu proponowanego modelu.
+
+\section{Standardy informacji lokalizacyjnej}
+PIDF-LO definiuje obiekt lokalizacji przenoszony w dokumencie obecności i obejmuje informacje geodezyjne oraz civic \cite{RFC4119,RFC5139}. RFC~5491 dodatkowo ogranicza użycie PIDF-LO w celu poprawy interoperacyjnej interpretacji \cite{RFC5491}. LEM ma węższy cel: nie definiuje dokumentu obecności, polityki użycia ani geometrii, lecz pięcioskładnikowy rdzeń lokalizacji i mapowania reprezentacyjne.
+
+IndoorGML~2.0 jest rozbudowanym modelem konceptualnym przestrzeni wewnętrznych, topologii, łączności i nawigacji \cite{IndoorGML2025}. IndoorLocationGML proponuje natomiast ramy kodowania lokalizacji absolutnej i względnej w środowisku indoor \cite{IndoorLocationGML2016}. W porównaniu z tymi rozwiązaniami LEM nie aspiruje do modelowania geometrii ani tras; może służyć jako mały opis lokalizacyjny na granicy systemów, które przechowują bogatszy model przestrzeni.
+
+\section{Semantyczne modele budynków}
+Brick jest ontologią metadanych dla przenośnych aplikacji inteligentnych budynków i modeluje m.in. zasoby, przestrzenie oraz relacje lokalizacyjne \cite{Brick2018}. Project Haystack definiuje konwencje tagowania obejmujące hierarchię site, space, floor i room oraz numery kondygnacji \cite{HaystackSpaces2026}. Oba rozwiązania oferują bogatszy opis zasobów i relacji budynkowych. LEM koncentruje się na przenośnym opisie samej lokalizacji encji, niezależnym od pełnej ontologii systemu źródłowego.
+
+\section{Porównanie zakresu}
+Tabela \ref{tab:related-comparison} porównuje zakresy, a nie dojrzałość ani jakość rozwiązań. Określenie „częściowo” oznacza, że cecha występuje w innej strukturze lub jako część szerszego modelu.
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}X|c|c|c|c|c|}
+\hline
+\textbf{Cecha} & \textbf{LEM} & \textbf{PIDF-LO} & \textbf{IndoorGML} & \textbf{Brick} & \textbf{Haystack} \\ \hline
+Mały rdzeń niezależny od formatu & tak & nie & nie & nie & nie \\ \hline
+Geometria / współrzędne & mapowanie & tak & tak & częściowo & częściowo \\ \hline
+Topologia i nawigacja indoor & nie & nie & tak & częściowo & częściowo \\ \hline
+Hierarchia site/building/level/space & tak & częściowo & tak & tak & tak \\ \hline
+Opis położenia względnego tekstem & tak & częściowo & tak & częściowo & częściowo \\ \hline
+Opisy częściowe i profile wymagań & tak & reguły użycia & rozszerzenia & rozszerzenia & konwencje \\ \hline
+Łączne mapowania JSON/YANG/TLV & tak & nie & nie & nie & nie \\ \hline
+Ścisła równość postaci kanonicznej & tak & inny model & inny model & tożsamość grafu & konwencje \\ \hline
+\end{tabularx}
+\caption{Porównanie zakresu LEM i wybranych rozwiązań powiązanych}
+\label{tab:related-comparison}
+\end{table}
+
+\section{Granica deklarowanej nowości}
+Deklarowany wkład LEM polega na połączeniu: małego pięcioskładnikowego rdzenia, dokładnej krotki kanonicznej, opisów częściowych, profili oraz zestawu mapowań dla środowisk sieciowych i zarządczych. Dokument nie twierdzi, że wprowadza pierwszą reprezentację lokalizacji wewnętrznej ani że zastępuje PIDF-LO, IndoorGML, Brick lub Haystack.
+
+Niniejsza wersja jest specyfikacją techniczną. Artefakty referencyjne potwierdzają spójność składniową schematów i przykładów, lecz nie stanowią jeszcze eksperymentalnej oceny interoperacyjności pomiędzy niezależnymi implementacjami. Taka ocena pozostaje zadaniem dla dalszej pracy badawczej.

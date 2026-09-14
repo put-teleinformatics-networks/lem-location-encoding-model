@@ -1,0 +1,110 @@
+% =====================================================================
+% Rozdział 6: Zagadnienia bezpieczeństwa i prywatności
+% =====================================================================
+
+\chapter{Zagadnienia bezpieczeństwa i prywatności}
+\label{chap:bezpieczenstwo}
+
+\section{Zakres odpowiedzialności modelu}
+Model LEM definiuje wyłącznie semantykę informacji o lokalizacji oraz zasady jej interpretacji. LEM NIE DEFINIUJE mechanizmów uwierzytelniania, autoryzacji, kontroli dostępu, szyfrowania, ochrony transmisji, retencji danych ani zasad zarządzania informacjami lokalizacyjnymi.
+
+Implementacje wykorzystujące LEM POWINNY zapewniać mechanizmy ochrony danych odpowiednie do wymagań środowiska, w którym model jest stosowany. Model LEM nie definiuje ani nie weryfikuje spełnienia tego wymagania — pozostaje ono w gestii implementacji i środowiska, podobnie jak inne wymagania pozamodelowe określone w sekcji 2.5.5.
+
+Bezpieczeństwo informacji lokalizacyjnej jest zależne od sposobu jej pozyskania, przechowywania, przetwarzania oraz udostępniania przez systemy wykorzystujące model LEM.
+
+\section{Ochrona integralności informacji}
+Informacja lokalizacyjna reprezentowana zgodnie z LEM MUSI zachowywać zgodność z interpretacją kanoniczną modelu.
+
+Implementacja NIE MOŻE modyfikować znaczenia komponentów lokalizacji w sposób prowadzący do zmiany ich interpretacji określonej w Rozdziale 2. Każda modyfikacja informacji lokalizacyjnej, która narusza zasady semantyczne określone w modelu LEM, unieważnia zgodność tych danych z modelem.
+
+Mechanizmy zapewniające integralność danych, w tym kontrola zmian, podpisywanie, sumy kontrolne lub inne metody ochrony informacji, pozostają odpowiedzialnością implementacji.
+
+\section{Separacja lokalizacji od identyfikacji}
+Model LEM opisuje informację o fizycznej lokalizacji niezależnie od identyfikacji obiektu, użytkownika lub systemu.
+
+LEM NIE DEFINIUJE:
+\begin{itemize}
+    \item mechanizmów identyfikacji obiektów,
+    \item mechanizmów identyfikacji użytkowników,
+    \item sposobów powiązania lokalizacji z konkretną osobą lub podmiotem,
+    \item zasad zarządzania tożsamością.
+\end{itemize}
+
+Powiązanie informacji lokalizacyjnej z identyfikatorami obiektów lub osób jest wykonywane poza modelem LEM i podlega zasadom obowiązującym w danym systemie. Identyfikatory nadane przez systemy zewnętrzne mogą być wykorzystywane przez implementacje LEM wyłącznie jako sposób odwołania się do elementu opisu lokalizacji (zob. A.9) — takie wykorzystanie nie stanowi mechanizmu identyfikacji w rozumieniu modelu LEM ani nie osłabia zasady separacji określonej w niniejszej sekcji.
+
+Implementacje MUSZĄ uwzględniać, że połączenie informacji lokalizacyjnej z innymi danymi może powodować powstanie dodatkowych wymagań bezpieczeństwa lub prywatności.
+
+\section{Zaufanie do źródła informacji lokalizacyjnej}
+Model LEM nie określa metod pozyskiwania informacji lokalizacyjnej ani sposobów oceny wiarygodności źródła danych.
+
+LEM NIE DEFINIUJE:
+\begin{itemize}
+    \item technologii pomiaru lokalizacji,
+    \item algorytmów określania położenia,
+    \item metod oceny dokładności lub jakości pomiaru,
+    \item mechanizmów potwierdzania pochodzenia danych.
+\end{itemize}
+
+Implementacja wykorzystująca LEM MOŻE przechowywać dodatkowe informacje dotyczące pochodzenia lub jakości danych, jednak informacje te nie stanowią części podstawowej semantyki modelu LEM, chyba że zostaną określone przez odpowiedny profil zgodny z zasadami Rozdziału 4.
+
+\section{Profile bezpieczeństwa}
+Wymagania bezpieczeństwa specyficzne dla określonych środowisk MOGĄ być definiowane poprzez profile bezpieczeństwa lub profile zastosowań zgodne z zasadami określonymi w Rozdziale 4.
+
+Profil bezpieczeństwa:
+\begin{itemize}
+    \item NIE MOŻE zmieniać znaczenia komponentów modelu LEM,
+    \item NIE MOŻE definiować alternatywnej interpretacji informacji lokalizacyjnej,
+    \item MOŻE określać wymagania dotyczące ochrony, dostępu lub sposobu wykorzystania informacji.
+\end{itemize}
+
+Profile bezpieczeństwa pozostają ograniczeniami dotyczącymi implementacji lub zastosowania modelu, a nie rozszerzeniem semantyki LEM.
+
+\section{Prywatność informacji lokalizacyjnej}
+Model LEM jest neutralny względem klasyfikacji prawnej lub organizacyjnej informacji lokalizacyjnej.
+
+LEM NIE OKREŚLA, czy określona informacja lokalizacyjna stanowi dane osobowe, informację poufną lub inną kategorię danych chronionych.
+
+Ocena charakteru informacji oraz zastosowanie odpowiednich mechanizmów ochrony pozostają odpowiedzialnością systemów wykorzystujących model LEM.
+
+Implementacje MUSZĄ uwzględniać wymagania dotyczące prywatności wynikające z obowiązujących regulacji, polityk organizacyjnych oraz charakteru przetwarzanych danych. W szczególności implementacje POWINNY uwzględniać, że nawet ograniczony podzbiór komponentów LEM (np. Reference Space i Relative Position bez pełnego kontekstu hierarchicznego) może, w zależności od kontekstu, stanowić informację o istotnym znaczeniu dla prywatności (zob. 2.4.4).
+
+\section{Minimalizacja ujawnianej informacji}
+Systemy wykorzystujące LEM POWINNY ograniczać zakres udostępnianych informacji lokalizacyjnych do poziomu wymaganego przez określony cel zastosowania.
+
+Udostępniana reprezentacja informacji lokalizacyjnej MOŻE wykorzystywać ograniczony zakres komponentów modelu, jeżeli zachowana zostaje zgodność z wymaganiami danego profilu oraz interpretacją semantyczną LEM.
+
+Model LEM nie definiuje polityk ujawniania informacji ani mechanizmów kontroli dostępu. Zasady te pozostają odpowiedzialnością implementacji.
+
+\section{Spójność semantyczna rozszerzeń a bezpieczeństwo}
+Rozszerzenia wykorzystujące model LEM MUSZĄ zachowywać zgodność z podstawową semantyką modelu (zob. 3.1, 4.5, 7.4).
+
+Rozszerzenie NIE MOŻE wprowadzać nowych znaczeń istniejących komponentów ani powodować niejednoznaczności interpretacji informacji lokalizacyjnej.
+
+Z punktu widzenia bezpieczeństwa, rozszerzenie niespełniające tej zasady stanowi dodatkowe ryzyko: pole rozszerzenia błędnie zinterpretowane jako standardowy komponent LEM może prowadzić implementację do niepoprawnego wniosku o lokalizacji obiektu. Implementacje POWINNY jednoznacznie odróżniać dane rozszerzeń od komponentów podstawowych modelu LEM podczas przetwarzania (zob. 5.1, 7.7).
+
+Dodatkowe informacje wymagane przez określone środowisko zastosowania POWINNY być definiowane poprzez mechanizmy rozszerzeń lub profile, a nie poprzez zmianę podstawowego modelu semantycznego LEM.
+
+\section{Zbiorczy model zagrożeń (informacyjny)}
+Poniższa tabela zestawia w jednym miejscu zagrożenia, których dotyczą zasady rozproszone w sekcjach 6.1–6.8, wraz z mechanizmami obrony — pozostającymi, zgodnie z 6.1, poza zakresem modelu LEM. Ma charakter informacyjny i poglądowy, a nie wyczerpującej, formalnej analizy zagrożeń.
+
+\begin{table}[p]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{|p{0.35cm}|p{1.9cm}|p{2.3cm}|p{2.5cm}|p{2.5cm}|p{0.75cm}|}
+\hline
+\textbf{Nr} & \textbf{Zagrożenie} & \textbf{Wektor} & \textbf{Konsekwencja} & \textbf{Mechanizm obrony (poza zakresem LEM)} & \textbf{Odn.} \\ \hline
+1 & Podsłuch transmisji & Przechwycenie danych lokalizacyjnych podczas przesyłania między systemami & Ujawnienie lokalizacji osobom nieuprawnionym & Szyfrowanie transportu (np. TLS) & 6.1 \\ \hline
+2 & Naruszenie integralności w tranzycie & Modyfikacja wartości komponentów bez wykrycia & Błędna interpretacja lokalizacji — szczególnie krytyczne w profilu lokalizacji awaryjnej (4.3.3) & Podpisywanie, sumy kontrolne & 6.2 \\ \hline
+3 & Fałszowanie źródła danych & Wstrzyknięcie danych z podszywającego się lub niezaufanego źródła & Zaufanie do nieprawdziwej lokalizacji & Uwierzytelnianie źródła & 6.4 \\ \hline
+4 & Deanonimizacja przez korelację & Połączenie informacji lokalizacyjnej z identyfikatorem zewnętrznym lub wzorcem & Ujawnienie tożsamości osoby mimo formalnej separacji lokalizacja $\leftrightarrow$ identyfikacja & Kontrola dostępu, ograniczenie łączenia zbiorów danych & 6.3, 6.6 \\ \hline
+5 & Nadmierne ujawnienie precyzji & Udostępnienie pełnego, precyzyjnego opisu lokalizacji tam, gdzie cel wymagał mniejszej precyzji & Ujawnienie więcej informacji niż niezbędne do celu & Minimalizacja zakresu ujawnianych komponentów & 6.7, 2.4.4 \\ \hline
+6 & Wstrzyknięcie nierozpoznanego rozszerzenia & Dodanie pola o nazwie/strukturze imitującej komponent LEM & Błędna interpretacja danych rozszerzenia jako części modelu semantycznego & Jawne, techniczne rozróżnianie rozszerzeń od komponentów podstawowych & 6.8, 5.1 \\ \hline
+7 & Obejście wymagań profilu & Świadome przesłanie opisu zgodnego z modelem podstawowym, lecz nie spełniającego wymagań profilu & Działanie na podstawie informacji o niewystarczającej precyzji & Wymuszenie walidacji zgodności z profilem po stronie odbiorcy & 4.4.3, 4.3.3.1 \\ \hline
+8 & Wykorzystanie nieaktualnych danych & Odebranie i wykorzystanie przestarzałego stanu informacji lokalizacyjnej & Działanie na podstawie nieaktualnej lokalizacji obiektu & Znaczniki czasu, mechanizmy świeżości danych & A.12, 6.4 \\ \hline
+\end{tabular}
+\caption{Zbiorczy model zagrożeń (informacyjny)}
+\label{tab:threat_model}
+\end{table}
+
+Pozycje 6 i 7 wynikają bezpośrednio z właściwości modelu LEM opisanych w innych rozdziałach (odpowiednio: rozróżnianie rozszerzeń od komponentów podstawowych oraz niezależność walidacji profilu od walidacji modelu podstawowego) i ilustrują, że dyscyplina semantyczna modelu ma również praktyczne konsekwencje dla bezpieczeństwa, a nie wyłącznie dla spójności interpretacji.

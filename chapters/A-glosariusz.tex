@@ -1,0 +1,43 @@
+% =====================================================================
+% Załącznik A: Glosariusz terminów LEM
+% =====================================================================
+
+\appendix
+\chapter{Glosariusz terminów LEM}
+\label{app:glosariusz}
+
+\section{Terminy normatywne}
+Terminy zdefiniowane w niniejszym glosariuszu mają znaczenie normatywne dla całej specyfikacji LEM. Użycie terminu zdefiniowanego w glosariuszu MUSI być zgodne z jego znaczeniem określonym w niniejszym załączniku.
+
+Model LEM opisuje znaczenie informacji lokalizacyjnej, a nie: sposób identyfikacji obiektów, sposób pozyskiwania informacji lokalizacyjnej, metodę określania położenia, sposób przechowywania historii zmian, mechanizmy bezpieczeństwa lub zarządzania dostępem.
+
+Rozszerzenia, profile oraz implementacje LEM NIE MOGĄ wprowadzać nowych znaczeń dla istniejących terminów ani komponentów modelu. W przypadku konieczności wprowadzenia nowego znaczenia semantycznego zmiana MUSI zostać wykonana w podstawowym modelu LEM zgodnie z zasadami wersjonowania określonymi w Rozdziale 7.
+
+\section{Zestawienie pojęć}
+Poniższa tabela zawiera definicje kluczowych terminów modelu LEM.
+
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.3}
+\begin{longtable}{|p{0.27\textwidth}|p{0.68\textwidth}|}
+\caption{Glosariusz terminów modelu LEM}\label{tab:glossary}\\
+\hline
+\textbf{Termin} & \textbf{Definicja} \\ \hline
+\endfirsthead
+\hline
+\textbf{Termin} & \textbf{Definicja} \\ \hline
+\endhead
+\textbf{A.1. Lokalizacja} \newline (Location) & Informacja opisująca położenie obiektu względem jednej lub wielu przestrzeni referencyjnych. Lokalizacja stanowi semantyczny opis relacji przestrzennych, hierarchicznych lub innych określonych przez model LEM. LEM nie definiuje metod pomiaru ani sposobów pozyskiwania informacji lokalizacyjnej. \\ \hline
+\textbf{A.2. Obiekt} \newline (Object / Entity) & Element fizyczny lub logiczny opisywany przez model LEM. Tożsamość obiektu jest zarządzana przez systemy zewnętrzne. LEM nie definiuje mechanizmów tworzenia, nadawania ani zarządzania identyfikatorami obiektów. \\ \hline
+\textbf{A.3. Komponent} \newline (Component) & Element modelu LEM posiadający określone i jednoznaczne znaczenie semantyczne. Zbiór komponentów modelu LEM jest zamknięty i definiowany przez specyfikację modelu (zob. 2.1). Rozszerzenia nie mogą zmieniać znaczenia istniejących komponentów. \\ \hline
+\textbf{A.4. Przestrzeń referencyjna} \newline (Reference Space) & Obiekt lub przestrzeń posiadająca rolę referencyjną (zob. A.11) i stanowiąca element odniesienia dla opisu lokalizacji. Przestrzeń referencyjna może reprezentować dowolny element przestrzeni fizycznej lub logicznej, jeżeli spełnia wymagania interpretacji modelu LEM. Komponenty Site, Building i Level są nazwanymi realizacjami tej roli w kontekście hierarchicznym (zob. 2.1). \\ \hline
+\textbf{A.5. Położenie względne} \newline (Relative Position) & Informacja określająca położenie obiektu względem określonej przestrzeni referencyjnej lub elementu posiadającego rolę referencyjną. Położenie względne jest interpretowane zgodnie z zasadami modelu LEM i nie definiuje sposobu określania położenia. \\ \hline
+\textbf{A.6. Relacja} \newline (Relation) & Kierunkowy związek semantyczny pomiędzy elementami modelu LEM. Relacja określa sposób interpretacji zależności pomiędzy elementami. Kierunek relacji jest częścią jej znaczenia i nie może być pomijany podczas interpretacji informacji (zob. A.13). \\ \hline
+\textbf{A.7. Reprezentacja} \newline (Representation) & Forma zapisu informacji zgodnej z modelem LEM, przeznaczona do przechowywania, wymiany lub przetwarzania danych. Reprezentacja może być tekstowa, binarna lub strukturalna. Różne reprezentacje są równoważne semantycznie, jeżeli prowadzą do tej samej interpretacji informacji określonej przez model LEM w zakresie reprezentowanych komponentów. \\ \hline
+\textbf{A.8. Interpretacja kanoniczna} \newline (Canonical Interpretation) & Jednoznaczne znaczenie informacji wynikające z zasad modelu LEM, niezależne od zastosowanej reprezentacji danych. Interpretacja kanoniczna określa sposób rozumienia informacji, a nie jej fizyczny sposób zapisu. \\ \hline
+\textbf{A.9. Identyfikacja} \newline (Identification) & Proces przypisania oznaczenia lub identyfikatora obiektowi albo przestrzeni przez system zewnętrzny. LEM nie definiuje mechanizmów identyfikacji obiektów ani przestrzeni referencyjnych. Identyfikatory nadane poza modelem LEM mogą być wykorzystywane przez implementacje LEM wyłącznie jako sposób odwołania się do elementów opisu lokalizacji — takie wykorzystanie nie stanowi mechanizmu identyfikacji w rozumieniu LEM (zob. 6.3). \\ \hline
+\textbf{A.10. Profil} \newline (Profile) & Ograniczenie lub specjalizacja modelu LEM przeznaczona dla określonej domeny zastosowania. Profil może definiować wymagania dotyczące wykorzystania komponentów i reprezentacji, lecz nie może zmieniać podstawowej semantyki modelu LEM. \\ \hline
+\textbf{A.11. Rola referencyjna} \newline (Reference Role) & Zdolność obiektu lub elementu modelu do pełnienia funkcji przestrzeni odniesienia w określonym kontekście interpretacji. Rola referencyjna nie zmienia podstawowej klasyfikacji elementu, lecz określa sposób jego wykorzystania w modelu lokalizacji. Site, Building, Level i Reference Space są komponentami pełniącymi tę rolę (zob. 2.1). \\ \hline
+\textbf{A.12. Stan informacji lokalizacyjnej} \newline (Location Information State) & Reprezentacja relacji lokalizacyjnych obowiązujących w momencie interpretacji informacji. Model LEM opisuje stan informacji lokalizacyjnej i nie definiuje mechanizmów zarządzania historią zmian, znaczników czasu ani rejestracji zdarzeń. \\ \hline
+\textbf{A.13. Relacja kierunkowa} \newline (Directed Relation) & Relacja, w której kolejność elementów uczestniczących w relacji stanowi część znaczenia semantycznego. Relacja \texttt{located\_in(Object, ReferenceSpace)} posiada inne znaczenie niż relacja odwrotna \texttt{contains(ReferenceSpace, Object)} (zob. 2.2). \\ \hline
+\end{longtable}
